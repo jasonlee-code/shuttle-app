@@ -1,0 +1,33 @@
+<script>
+async function sendInquiry() {
+  const type = document.querySelector('input').value;
+  const content = document.querySelector('textarea').value;
+  const btn = document.querySelector('.submit-btn');
+
+  if (!type || !content) {
+    alert("모든 항목을 입력해주세요.");
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerText = "전송 중...";
+
+  // 💡 구글 앱스 스크립트 웹 앱 URL을 여기에 넣으세요
+  const scriptURL = '여기에_복사한_웹_앱_URL_붙여넣기';
+
+  try {
+    await fetch(scriptURL, {
+      method: 'POST',
+      body: JSON.stringify({ type: type, content: content })
+    });
+    
+    alert("문의가 스프레드시트에 정상적으로 접수되었습니다!");
+    location.href = 'index.html';
+  } catch (error) {
+    console.error('Error!', error.message);
+    alert("전송에 실패했습니다. 다시 시도해주세요.");
+    btn.disabled = false;
+    btn.innerText = "문의 보내기";
+  }
+}
+</script>
