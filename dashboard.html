@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>대시보드</title>
+
+<style>
+button {
+    font-size: 18px;       /* 글씨 크기 */
+    padding: 15px 25px;    /* 버튼 크기 */
+    margin: 10px;          /* 버튼 간격 */
+    border-radius: 10px;   /* 둥근 모서리 */
+    border: none;
+    cursor: pointer;
+}
+
+/* 버튼 색상 */
+.btn-back {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-naver {
+    background-color: #03c75a;
+    color: white;
+}
+
+.btn-sheet {
+    background-color: #4285f4;
+    color: white;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>대시보드</h1>
+
+<p>여기에 통계 / 노선관리 / 현황 넣으면 됨</p>
+
+<br>
+
+<!-- 뒤로가기 -->
+<button class="btn-back" onclick="history.back()">
+⬅ 뒤로가기
+</button>
+
+<!-- 네이버 -->
+<button class="btn-naver" onclick="location.href='https://forms.gle/NqVtjzGQTj85zq9r7'">
+🌐 등원알림 서비스 
+</button>
+
+<!-- 스프레드시트 -->
+<button class="btn-sheet" onclick="location.href='https://docs.google.com/spreadsheets/d/1qtSFkMXw7nxoroMu4Z0L75u75eQiNujaJp2f7ktWViE/edit?usp=sharing'">
+📊 스프레드시트
+</button>
+
+</body>
+</html>
