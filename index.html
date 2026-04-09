@@ -10,7 +10,6 @@
 
 <link rel="manifest" href="manifest.json">
 
-
 <style>
 body {
   margin: 0;
@@ -105,8 +104,18 @@ function openDashboard() {
   location.href = 'dashboard.html';
 }
 
+// 버스 관리 클릭 시 암호 확인 로직 추가
 function openBus() {
-  window.open('bus.html', '_blank');
+  const adminPassword = "1234"; // 여기에 원하는 비밀번호를 입력하세요.
+  const userInput = prompt("관리자 암호를 입력하세요:");
+
+  if (userInput === adminPassword) {
+    window.open('bus.html', '_blank');
+  } else if (userInput === null) {
+    // 사용자가 취소를 눌렀을 경우 아무것도 하지 않음
+  } else {
+    alert("암호가 올바르지 않습니다.");
+  }
 }
 
 function openRoute() {
@@ -120,5 +129,4 @@ if ('serviceWorker' in navigator) {
 </script>
 
 </body>
-
 </html>
