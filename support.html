@@ -29,6 +29,8 @@
     font-size: 16px;
     box-sizing: border-box;
     outline: none;
+    background-color: #fff;
+    appearance: none; /* 기본 화살표 스타일 제거 */
   }
 
   .input-group input:focus, .input-group textarea:focus, .input-group select:focus {
@@ -62,25 +64,38 @@
   <div class="input-group">
     <label>캠퍼스</label>
     <select id="campus">
-      <option value="">캠퍼스 선택</option>
-      <option value="인서울">인서울 캠퍼스</option>
-      <option value="글로벌">글로벌 캠퍼스</option>
+      <option value="">캠퍼스를 선택하세요</option>
+      <option value="일산캠퍼스">일산캠퍼스</option>
+      <option value="정발캠퍼스">정발캠퍼스</option>
+      <option value="일산엠폴리">일산엠폴리</option>
     </select>
   </div>
 
   <div class="input-group">
     <label>호차</label>
-    <input type="number" id="busNumber" placeholder="예: 102">
+    <select id="busNo">
+      <option value="">호차를 선택하세요</option>
+      <option value="1호차">1호차</option>
+      <option value="2호차">2호차</option>
+      <option value="3호차">3호차</option>
+      <option value="4호차">4호차</option>
+      <option value="5호차">5호차</option>
+      <option value="6호차">6호차</option>
+      <option value="7호차">7호차</option>
+      <option value="8호차">8호차</option>
+      <option value="9호차">9호차</option>
+      <option value="10호차">10호차</option>
+    </select>
   </div>
 
   <div class="input-group">
     <label>문의 유형</label>
-    <input type="text" id="inquiryType" placeholder="예: 노선 오차, 앱 오류 등">
+    <input type="text" id="type" placeholder="예: 노선 오차, 앱 오류 등">
   </div>
 
   <div class="input-group">
     <label>문의 내용</label>
-    <textarea id="inquiryContent" rows="5" placeholder="내용을 입력해주세요."></textarea>
+    <textarea id="content" rows="5" placeholder="내용을 입력해주세요."></textarea>
   </div>
 
   <button class="submit-btn" id="submitBtn" onclick="sendInquiry()">문의 보내기</button>
@@ -89,9 +104,9 @@
 <script>
 async function sendInquiry() {
   const campus = document.getElementById('campus').value;
-  const busNo = document.getElementById('busNumber').value;
-  const type = document.getElementById('inquiryType').value;
-  const content = document.getElementById('inquiryContent').value;
+  const busNo = document.getElementById('busNo').value;
+  const type = document.getElementById('type').value;
+  const content = document.getElementById('content').value;
   const btn = document.getElementById('submitBtn');
 
   if (!campus || !busNo || !type || !content) {
@@ -102,8 +117,8 @@ async function sendInquiry() {
   btn.disabled = true;
   btn.innerText = "전송 중...";
 
-  // 💡 본인의 구글 웹 앱 URL을 여기에 붙여넣으세요
-  const scriptURL = 'https://script.google.com/macros/s/AKfycbyP1ry1mPusHU0GOryXpH7saJNOfzPfpgUVk84YKcu6URKwWn2lgU5IFXSI4pLxhHM/exec
+  // 본인의 구글 웹 앱 URL
+  const scriptURL = 'https://script.google.com/macros/s/AKfycbzEwqF6vq6Iy_0mdWD5hejwYG4fuVyZQLN7Jk92olsj2wgyO8rYkkwMIZAGXgtMX4A/exec
 
   try {
     await fetch(scriptURL, {
@@ -118,7 +133,7 @@ async function sendInquiry() {
       })
     });
     
-    alert("정상적으로 접수되었습니다!");
+    alert("문의가 정상적으로 접수되었습니다!");
     location.href = 'index.html'; 
   } catch (error) {
     alert("전송 실패. 다시 시도해주세요.");
