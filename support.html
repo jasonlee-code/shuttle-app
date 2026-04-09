@@ -30,7 +30,7 @@
     box-sizing: border-box;
     outline: none;
     background-color: #fff;
-    appearance: none; /* 기본 화살표 스타일 제거 */
+    appearance: none;
   }
 
   .input-group input:focus, .input-group textarea:focus, .input-group select:focus {
@@ -117,8 +117,8 @@ async function sendInquiry() {
   btn.disabled = true;
   btn.innerText = "전송 중...";
 
-  // 본인의 구글 웹 앱 URL
-  const scriptURL = 'https://script.google.com/macros/s/AKfycbzEwqF6vq6Iy_0mdWD5hejwYG4fuVyZQLN7Jk92olsj2wgyO8rYkkwMIZAGXgtMX4A/exec'
+  // 💡 제공해주신 새로운 구글 웹 앱 URL로 수정 완료
+  const scriptURL = 'https://script.google.com/macros/s/AKfycbwJfHm_FYefwgakB0PQdUUanTKob52HUgMBqbkLI5jNTq72UikZE49dFPUiSPppx1M/exec';
 
   try {
     await fetch(scriptURL, {
@@ -133,10 +133,12 @@ async function sendInquiry() {
       })
     });
     
+    // no-cors 모드에서는 전송 시도 직후 바로 성공 알림을 띄웁니다.
     alert("문의가 정상적으로 접수되었습니다!");
     location.href = 'index.html'; 
   } catch (error) {
-    alert("전송 실패. 다시 시도해주세요.");
+    console.error('Error!', error.message);
+    alert("전송에 문제가 발생했습니다. 관리자 승인 여부를 확인해주세요.");
     btn.disabled = false;
     btn.innerText = "문의 보내기";
   }
