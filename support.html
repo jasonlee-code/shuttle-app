@@ -1,33 +1,178 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>문의사항</title>
+
+<style>
+body {
+  margin: 0;
+  background: #f8f9fa;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  padding: 20px;
+}
+
+/* 상단 헤더 */
+.header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 25px;
+  padding-top: 10px;
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  margin-right: 15px;
+  color: #333;
+}
+
+.header h2 {
+  font-size: 20px;
+  margin: 0;
+  font-weight: 700;
+}
+
+/* 입력 폼 컨테이너 */
+.form-container {
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.input-group {
+  margin-bottom: 20px;
+}
+
+.input-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.input-group input, .input-group textarea {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1.5px solid #eee;
+  border-radius: 12px;
+  font-size: 16px;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.input-group input:focus, .input-group textarea:focus {
+  border-color: #667eea;
+}
+
+.input-group textarea {
+  height: 150px;
+  resize: none;
+}
+
+/* 전송 버튼 */
+.submit-btn {
+  width: 100%;
+  height: 55px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 15px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+  transition: transform 0.2s;
+}
+
+.submit-btn:disabled {
+  background: #ccc;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* 안내 문구 */
+.info-text {
+  margin-top: 20px;
+  font-size: 13px;
+  color: #999;
+  text-align: center;
+  line-height: 1.5;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <button class="back-btn" onclick="history.back()">⬅</button>
+  <h2>1:1 문의하기</h2>
+</div>
+
+<div class="form-container">
+  <div class="input-group">
+    <label>문의 유형</label>
+    <input type="text" id="inquiryType" placeholder="예: 노선 오차, 앱 오류 등">
+  </div>
+
+  <div class="input-group">
+    <label>문의 내용</label>
+    <textarea id="inquiryContent" placeholder="자세한 내용을 입력해 주세요."></textarea>
+  </div>
+
+  <button class="submit-btn" id="submitBtn" onclick="sendInquiry()">문의 보내기</button>
+</div>
+
+<p class="info-text">
+  접수된 문의는 스프레드시트에 기록되며<br>
+  담당자가 확인 후 처리해 드립니다.
+</p>
+
 <script>
 async function sendInquiry() {
-  const type = document.querySelector('input').value;
-  const content = document.querySelector('textarea').value;
-  const btn = document.querySelector('.submit-btn');
+  const type = document.getElementById('inquiryType').value;
+  const content = document.getElementById('inquiryContent').value;
+  const btn = document.getElementById('submitBtn');
 
   if (!type || !content) {
     alert("모든 항목을 입력해주세요.");
     return;
   }
 
+  // 버튼 비활성화 (여러 번 클릭 방지)
   btn.disabled = true;
   btn.innerText = "전송 중...";
 
-  // 💡 구글 앱스 스크립트 웹 앱 URL을 여기에 넣으세요
-  const scriptURL = '여기에_복사한_웹_앱_URL_붙여넣기';
+  // 💡 구글 앱스 스크립트 웹 앱 URL
+  const scriptURL = 'https://script.google.com/macros/s/AKfycbyL12wabmJ2h4RC3_Mz19PyVCJq0Z5TKGUSPsU3uvL4Hb2snjYoS9ew9HbPDxxfy-I/exec';
 
   try {
+    // no-cors 모드로 데이터 전송
     await fetch(scriptURL, {
       method: 'POST',
+      mode: 'no-cors', 
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify({ type: type, content: content })
     });
     
-    alert("문의가 스프레드시트에 정상적으로 접수되었습니다!");
-    location.href = 'index.html';
+    // 전송 후 알림
+    alert("문의가 정상적으로 접수되었습니다!");
+    location.href = 'index.html'; 
   } catch (error) {
-    console.error('Error!', error.message);
-    alert("전송에 실패했습니다. 다시 시도해주세요.");
+    console.error('전송 실패!', error);
+    alert("오류가 발생했습니다. 다시 시도해주세요.");
     btn.disabled = false;
     btn.innerText = "문의 보내기";
   }
 }
 </script>
+
+</body>
+</html>
