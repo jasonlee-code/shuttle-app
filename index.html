@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>메인</title>
+<title>셔틀 관리 시스템</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -13,118 +13,146 @@
 <style>
 body {
   margin: 0;
-  background: #dfe3e8;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
+  background: #f0f2f5;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
 }
 
-/* 폰 프레임 */
+/* 폰 프레임 최적화 */
 .wrapper {
-  width: 360px;
-  height: 640px;
-  margin: 40px auto;
-  border-radius: 40px;
-  background: linear-gradient(180deg, #f8f9fb, #e9ecf2);
-  box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+  width: 100%;
+  max-width: 390px;
+  height: 100vh;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  padding: 30px 20px;
+  box-sizing: border-box;
+  position: relative;
+  overflow-y: auto;
+}
+
+/* 상단 타이틀 디자인 */
+.header {
+  margin-top: 40px;
+  margin-bottom: 30px;
+  text-align: left;
+}
+
+.header h1 {
+  font-size: 28px;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.header p {
+  font-size: 15px;
+  color: #666;
+  margin-top: 5px;
+}
+
+/* 버튼 컨테이너 (그리드 방식) */
+.menu-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+/* 첫 번째 버튼(대시보드)은 가로로 꽉 차게 */
+.btn-large {
+  grid-column: span 2;
+  height: 120px !important;
+  font-size: 22px !important;
+}
+
+/* 공통 버튼 스타일 */
+.btn {
+  height: 100px;
+  border-radius: 24px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 25px;
-  padding: 20px;
-  position: relative;
-}
-
-/* 상단 타이틀 */
-.title {
-  position: absolute;
-  top: 30px;
-  font-size: 20px;
-  font-weight: bold;
-}
-
-/* 버튼 스타일 */
-.btn {
-  width: 260px;
-  height: 80px;
-  border-radius: 20px;
-  background: white;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  font-weight: 600;
+  font-size: 17px;
+  font-weight: 700;
+  color: white;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+  border: none;
 }
 
-/* 버튼 hover */
-.btn:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+.btn i {
+  font-size: 24px;
+  margin-bottom: 8px;
 }
 
-/* 버튼 눌림 효과 */
 .btn:active {
-  transform: scale(0.97);
+  transform: scale(0.95);
+  filter: brightness(0.9);
 }
 
-/* 버튼 색상 구분 */
-.btn.dashboard {
-  background: linear-gradient(135deg, #4facfe, #00f2fe);
-  color: white;
-}
+/* 메뉴별 색상 그라데이션 */
+.dashboard { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+.bus       { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+.route     { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+.support   { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+.analysis  { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
 
-.btn.bus {
-  background: linear-gradient(135deg, #43e97b, #38f9d7);
-  color: white;
-}
-
-.btn.route {
-  background: linear-gradient(135deg, #fa709a, #fee140);
-  color: white;
-}
 </style>
-
 </head>
 <body>
 
 <div class="wrapper">
+  <div class="header">
+    <h1>셔틀 관리</h1>
+    <p>오늘의 운행 현황을 관리하세요.</p>
+  </div>
 
-  <div class="title">셔틀 관리</div>
+  <div class="menu-grid">
+    <button class="btn dashboard btn-large" onclick="location.href='dashboard.html'">
+      <span>📊 대시보드</span>
+    </button>
 
-  <div class="btn dashboard" onclick="openDashboard()">📊 대시보드</div>
-  <div class="btn bus" onclick="openBus()">🚌 버스관리</div>
-  <div class="btn route" onclick="openRoute()">📍 노선추가</div>
+    <button class="btn bus" onclick="openAdminPage('bus.html')">
+      <span>🚌 버스관리</span>
+    </button>
+    
+    <button class="btn route" onclick="openAdminPage('route.html')">
+      <span>📍 노선관리</span>
+    </button>
 
+    <button class="btn support" onclick="location.href='support.html'">
+      <span>💬 문의사항</span>
+    </button>
+
+    <button class="btn analysis" onclick="openAdminPage('analysis.html')">
+      <span>📈 노선분석</span>
+    </button>
+  </div>
 </div>
 
 <script>
-function openDashboard() {
-  location.href = 'dashboard.html';
-}
-
-// 버스 관리 클릭 시 암호 확인 로직 추가
-function openBus() {
-  const adminPassword = "1234"; // 여기에 원하는 비밀번호를 입력하세요.
+// 관리자 페이지 암호 확인 함수 통합
+function openAdminPage(pageUrl) {
+  const adminPassword = "1234"; 
   const userInput = prompt("관리자 암호를 입력하세요:");
 
   if (userInput === adminPassword) {
-    window.open('bus.html', '_blank');
-  } else if (userInput === null) {
-    // 사용자가 취소를 눌렀을 경우 아무것도 하지 않음
-  } else {
+    location.href = pageUrl; // 앱다운 느낌을 위해 location.href 사용
+  } else if (userInput !== null) {
     alert("암호가 올바르지 않습니다.");
   }
 }
 
-function openRoute() {
-  window.open('route.html', '_blank');
-}
-
+// 서비스 워커 등록
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/sw.js')
-    .then(() => console.log('SW 등록됨'));
+    .then(() => console.log('서비스 워커가 성공적으로 등록되었습니다.'));
 }
 </script>
 
