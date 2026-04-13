@@ -4,210 +4,58 @@
 <meta charset="UTF-8">
 <title>셔틀 통합 관리 시스템</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
+<link rel="manifest" href="/shuttle-app/manifest.json">
+<meta name="theme-color" content="#5d5fef">
 <style>
-:root {
-  --bg-color: #f8f9fc;
-  --card-bg: #ffffff;
-  --text-main: #1a1a1a;
-  --text-sub: #6e7191;
-  --accent-admin: #5d5fef;   /* 학원 - 블루 */
-  --accent-driver: #43e97b;  /* 기사 - 그린 */
-  --accent-parent: #ffb800;  /* 학부모 - 옐로우 */
-  --accent-support: #f5576c; /* 문의 - 레드 */
-}
-
-body {
-  margin: 0;
-  background: var(--bg-color);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-}
-
-.wrapper {
-  width: 100%;
-  max-width: 430px;
-  padding: 20px;
-  box-sizing: border-box;
-}
-
-.header {
-  margin-bottom: 40px;
-  text-align: center;
-}
-
-.header h1 {
-  font-size: 26px;
-  font-weight: 800;
-  color: var(--text-main);
-  margin: 0;
-}
-
-.header p {
-  font-size: 15px;
-  color: var(--text-sub);
-  margin-top: 10px;
-}
-
-/* 메인 메뉴 카드 스타일 */
-.menu-card {
-  background: var(--card-bg);
-  border-radius: 24px;
-  margin-bottom: 20px;
-  padding: 24px;
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  position: relative;
-  border: 1px solid rgba(0,0,0,0.03);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-  transition: all 0.25s ease;
-  text-decoration: none;
-}
-
-/* 왼쪽 포인트 컬러 라인 */
-.menu-card::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 20%;
-  bottom: 20%;
-  width: 5px;
-  border-radius: 0 5px 5px 0;
-}
-
-.icon-box {
-  width: 50px;
-  height: 50px;
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  margin-right: 18px;
-}
-
-.title-box {
-  display: flex;
-  flex-direction: column;
-}
-
-.title-box .main-title {
-  font-size: 19px;
-  font-weight: 800;
-  color: var(--text-main);
-}
-
-.title-box .sub-desc {
-  font-size: 13px;
-  color: var(--text-sub);
-  margin-top: 4px;
-}
-
-/* 화살표 아이콘 */
-.arrow {
-  margin-left: auto;
-  width: 8px;
-  height: 8px;
-  border-right: 2.5px solid #d1d1d6;
-  border-bottom: 2.5px solid #d1d1d6;
-  transform: rotate(-45deg);
-}
-
-/* 카테고리별 색상 설정 */
-.admin::before { background: var(--accent-admin); }
-.admin .icon-box { background: #eeefff; }
-
-.driver::before { background: var(--accent-driver); }
-.driver .icon-box { background: #eafff1; }
-
-.parent::before { background: var(--accent-parent); }
-.parent .icon-box { background: #fff9e6; }
-
-.support::before { background: var(--accent-support); }
-.support .icon-box { background: #fff0f2; }
-
-/* 클릭 효과 */
-.menu-card:active {
-  transform: scale(0.97);
-  background: #fbfbff;
-}
+  :root { --bg-color: #f8f9fc; --card-bg: #ffffff; --text-main: #1a1a1a; --text-sub: #6e7191; --accent-admin: #5d5fef; --accent-driver: #43e97b; --accent-parent: #ffb800; --accent-support: #f5576c; }
+  body { margin: 0; background: var(--bg-color); font-family: -apple-system, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+  .wrapper { width: 100%; max-width: 430px; padding: 20px; box-sizing: border-box; }
+  .header { margin-bottom: 40px; text-align: center; }
+  .header h1 { font-size: 26px; font-weight: 800; color: var(--text-main); margin: 0; }
+  .menu-card { background: var(--card-bg); border-radius: 24px; margin-bottom: 20px; padding: 24px; display: flex; align-items: center; cursor: pointer; position: relative; border: 1px solid rgba(0,0,0,0.03); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05); transition: all 0.25s ease; text-decoration: none; }
+  .menu-card::before { content: ''; position: absolute; left: 0; top: 20%; bottom: 20%; width: 5px; border-radius: 0 5px 5px 0; }
+  .icon-box { width: 50px; height: 50px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-right: 18px; }
+  .title-box { display: flex; flex-direction: column; }
+  .title-box .main-title { font-size: 19px; font-weight: 800; color: var(--text-main); }
+  .title-box .sub-desc { font-size: 13px; color: var(--text-sub); margin-top: 4px; }
+  .arrow { margin-left: auto; width: 8px; height: 8px; border-right: 2.5px solid #d1d1d6; border-bottom: 2.5px solid #d1d1d6; transform: rotate(-45deg); }
+  .admin::before { background: var(--accent-admin); } .admin .icon-box { background: #eeefff; }
+  .driver::before { background: var(--accent-driver); } .driver .icon-box { background: #eafff1; }
+  .parent::before { background: var(--accent-parent); } .parent .icon-box { background: #fff9e6; }
+  .support::before { background: var(--accent-support); } .support .icon-box { background: #fff0f2; }
+  .menu-card:active { transform: scale(0.97); background: #fbfbff; }
 </style>
 </head>
 <body>
-
 <div class="wrapper">
-  <div class="header">
-    <h1>통합 셔틀 관리</h1>
-    <p>본인의 역할을 선택해 주세요.</p>
+  <div class="header"><h1>통합 셔틀 관리</h1><p>본인의 역할을 선택해 주세요.</p></div>
+  <div class="menu-card admin" onclick="openProtectedPage('admin', '/shuttle-app/admin.html')">
+    <div class="icon-box">🏢</div><div class="title-box"><span class="main-title">학원 관계자</span><span class="sub-desc">셔틀 운영 및 학생 출결 관리</span></div><div class="arrow"></div>
   </div>
-
-  <div class="menu-card admin" onclick="openProtectedPage('admin', 'admin.html')">
-    <div class="icon-box">🏢</div>
-    <div class="title-box">
-      <span class="main-title">학원 관계자</span>
-      <span class="sub-desc">셔틀 운영 및 학생 출결 관리</span>
-    </div>
-    <div class="arrow"></div>
+  <div class="menu-card driver" onclick="openProtectedPage('driver', '/shuttle-app/bus.html')">
+    <div class="icon-box">👨‍✈️</div><div class="title-box"><span class="main-title">기사님</span><span class="sub-desc">운행 시작 및 학생 승하차 관리</span></div><div class="arrow"></div>
   </div>
-
-  <div class="menu-card driver" onclick="openProtectedPage('driver', 'bus.html')">
-    <div class="icon-box">👨‍✈️</div>
-    <div class="title-box">
-      <span class="main-title">기사님</span>
-      <span class="sub-desc">운행 시작 및 학생 승하차 관리</span>
-    </div>
-    <div class="arrow"></div>
+  <div class="menu-card parent" onclick="location.href='/shuttle-app/parent.html'">
+    <div class="icon-box">🏠</div><div class="title-box"><span class="main-title">학부모</span><span class="sub-desc">위치 확인 및 등하원 변동 신고</span></div><div class="arrow"></div>
   </div>
-
-  <div class="menu-card parent" onclick="location.href='parent.html'">
-    <div class="icon-box">🏠</div>
-    <div class="title-box">
-      <span class="main-title">학부모</span>
-      <span class="sub-desc">위치 확인 및 등하원 변동 신고</span>
-    </div>
-    <div class="arrow"></div>
-  </div>
-
-  <div class="menu-card support" onclick="location.href='support.html'">
-    <div class="icon-box">💬</div>
-    <div class="title-box">
-      <span class="main-title">문의사항</span>
-      <span class="sub-desc">시스템 오류 및 서비스 문의</span>
-    </div>
-    <div class="arrow"></div>
+  <div class="menu-card support" onclick="location.href='/shuttle-app/support.html'">
+    <div class="icon-box">💬</div><div class="title-box"><span class="main-title">문의사항</span><span class="sub-desc">시스템 오류 및 서비스 문의</span></div><div class="arrow"></div>
   </div>
 </div>
-
 <script>
-// 비밀번호 설정
-const PASSWORDS = {
-  admin: "1234",
-  driver: "5678"
-};
-
-function openProtectedPage(role, targetUrl) {
-  const message = role === 'admin' ? "학원 관계자 암호를 입력하세요:" : "기사님 암호를 입력하세요:";
-  const userInput = prompt(message);
-  
-  if (userInput === PASSWORDS[role]) {
-    location.href = targetUrl; // 암호 일치 시 해당 페이지로 이동
-  } else if (userInput !== null) {
-    alert("암호가 올바르지 않습니다.");
+  const PASSWORDS = { admin: "1234", driver: "5678" };
+  function openProtectedPage(role, targetUrl) {
+    const userInput = prompt(role === 'admin' ? "학원 암호(1234):" : "기사님 암호(5678):");
+    if (userInput === PASSWORDS[role]) { location.href = targetUrl; } 
+    else if (userInput !== null) { alert("암호가 틀립니다."); }
   }
-}
-
-// 서비스 워커 (PWA용)
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js')
-    .then(() => console.log('서비스 워커가 등록되었습니다.'));
-}
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/shuttle-app/sw.js', { scope: '/shuttle-app/' })
+        .then(reg => console.log('SW 등록됨:', reg.scope))
+        .catch(err => console.log('SW 실패:', err));
+    });
+  }
 </script>
-
 </body>
 </html>
