@@ -1,10 +1,10 @@
 {
-  "name": "셔틀 관리 시스템",
+  "name": "셔틀 통합 관리 시스템",
   "short_name": "셔틀관리",
   "start_url": "index.html",
   "display": "standalone",
-  "background_color": "#dfe3e8",
-  "theme_color": "#4facfe",
+  "background_color": "#f8f9fc", 
+  "theme_color": "#5d5fef",
   "icons": [
     {
       "src": "icon-192.png",

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>학부모 서비스 센터</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<style>
+  :root {
+    --bg-color: #f8f9fc;
+    --card-bg: #ffffff;
+    --text-main: #1a1a1a;
+    --text-sub: #6e7191;
+    --accent-parent: #ffb800; /* 학부모 포인트 컬러 */
+  }
+
+  body { margin: 0; background: var(--bg-color); font-family: -apple-system, sans-serif; display: flex; justify-content: center; }
+  .wrapper { width: 100%; max-width: 430px; padding: 40px 20px; box-sizing: border-box; }
+  
+  .header { margin-bottom: 30px; }
+  .header h1 { font-size: 24px; font-weight: 800; color: var(--text-main); margin: 0; }
+  .back-btn { display: inline-block; margin-bottom: 15px; color: var(--text-sub); text-decoration: none; font-size: 14px; }
+
+  .accordion-item { background: var(--card-bg); border-radius: 20px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); overflow: hidden; }
+  .accordion-header { padding: 20px 24px; display: flex; align-items: center; cursor: pointer; position: relative; }
+  .accordion-header::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--accent-parent); }
+  
+  .title-text { font-size: 17px; font-weight: 700; color: var(--text-main); }
+  .arrow { margin-left: auto; width: 8px; height: 8px; border-right: 2px solid #ccc; border-bottom: 2px solid #ccc; transform: rotate(45deg); transition: 0.3s; }
+  
+  .active .arrow { transform: rotate(-135deg); }
+  .accordion-content { max-height: 0; overflow: hidden; transition: 0.3s ease-out; background: #fafbff; }
+  .active .accordion-content { max-height: 500px; border-top: 1px dashed #eee; }
+
+  .sub-item { padding: 18px 24px; display: block; text-decoration: none; color: #444; font-size: 15px; border-bottom: 1px solid #f1f1f5; }
+  .sub-item:last-child { border-bottom: none; }
+</style>
+</head>
+<body>
+
+<div class="wrapper">
+  <a href="index.html" class="back-btn">◀ 메인으로 돌아가기</a>
+  <div class="header">
+    <h1>학부모 서비스 센터</h1>
+  </div>
+
+  <div class="accordion-item" onclick="this.classList.toggle('active')">
+    <div class="accordion-header">
+      <span class="title-text">📝 등/하원 변동 신고</span>
+      <div class="arrow"></div>
+    </div>
+    <div class="accordion-content">
+      <a href="#" class="sub-item">XXX학생 금일 개별등원합니다</a>
+      <a href="#" class="sub-item">XXX학생 금일 개별하원합니다</a>
+      <a href="#" class="sub-item">XXX학생 금일 결석합니다</a>
+    </div>
+  </div>
+
+  <div class="accordion-item" onclick="this.classList.toggle('active')">
+    <div class="accordion-header">
+      <span class="title-text">📩 학원 전달 사항</span>
+      <div class="arrow"></div>
+    </div>
+    <div class="accordion-content">
+      <a href="#" class="sub-item">민원 제출</a>
+      <a href="#" class="sub-item">첨부서류 제출 (병결 진단서 등)</a>
+    </div>
+  </div>
+
+  <div class="accordion-item" onclick="this.classList.toggle('active')">
+    <div class="accordion-header">
+      <span class="title-text">🔍 셔틀 위치 확인</span>
+      <div class="arrow"></div>
+    </div>
+    <div class="accordion-content">
+      <a href="#" class="sub-item">XX캠퍼스 X호차 현재위치 보기</a>
+      <a href="#" class="sub-item" style="font-size: 13px; color: #888;">* 지도 앱과 연결하여 실시간 확인</a>
+    </div>
+  </div>
+
+  <div class="accordion-item" onclick="this.classList.toggle('active')">
+    <div class="accordion-header">
+      <span class="title-text">🔔 알림장/공지 확인</span>
+      <div class="arrow"></div>
+    </div>
+    <div class="accordion-content">
+      <a href="#" class="sub-item">전체 공지사항 읽기</a>
+      <a href="#" class="sub-item">내 아이 알림장 확인</a>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
