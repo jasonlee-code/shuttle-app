@@ -1,93 +1,161 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<title>학부모 서비스 센터</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<style>
-  :root {
-    --bg-color: #f8f9fc;
-    --card-bg: #ffffff;
-    --text-main: #1a1a1a;
-    --text-sub: #6e7191;
-    --accent-parent: #ffb800; /* 학부모 포인트 컬러 */
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart-Poly 안심 알리미</title>
+  <style>
+    :root { 
+      --w-b: #ff5252; --b-b: #4caf50; --d-b: #9e9e9e;
+      --special: #FF9800; 
+      --primary: #2196F3; 
+    }
+    body { font-family: 'Pretendard', sans-serif; padding: 15px; background: #f4f7f6; max-width: 500px; margin: 0 auto; }
+    h2 { text-align: center; margin-bottom: 20px; font-size: 1.4rem; color: #333; }
 
-  body { margin: 0; background: var(--bg-color); font-family: -apple-system, sans-serif; display: flex; justify-content: center; }
-  .wrapper { width: 100%; max-width: 430px; padding: 40px 20px; box-sizing: border-box; }
-  
-  .header { margin-bottom: 30px; }
-  .header h1 { font-size: 24px; font-weight: 800; color: var(--text-main); margin: 0; }
-  .back-btn { display: inline-block; margin-bottom: 15px; color: var(--text-sub); text-decoration: none; font-size: 14px; }
+    .search-box { display: flex; gap: 8px; margin-bottom: 12px; }
+    .search-box input { flex: 1; padding: 15px; border-radius: 12px; border: 2px solid #ddd; font-size: 1.1rem; outline: none; }
+    .search-box button { padding: 0 15px; border-radius: 12px; border: none; background: var(--primary); color: white; font-weight: bold; cursor: pointer; }
 
-  .accordion-item { background: var(--card-bg); border-radius: 20px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); overflow: hidden; }
-  .accordion-header { padding: 20px 24px; display: flex; align-items: center; cursor: pointer; position: relative; }
-  .accordion-header::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--accent-parent); }
-  
-  .title-text { font-size: 17px; font-weight: 700; color: var(--text-main); }
-  .arrow { margin-left: auto; width: 8px; height: 8px; border-right: 2px solid #ccc; border-bottom: 2px solid #ccc; transform: rotate(45deg); transition: 0.3s; }
-  
-  .active .arrow { transform: rotate(-135deg); }
-  .accordion-content { max-height: 0; overflow: hidden; transition: 0.3s ease-out; background: #fafbff; }
-  .active .accordion-content { max-height: 500px; border-top: 1px dashed #eee; }
+    /* ↕️ 가로 나란히 배치 스타일 */
+    .action-row { display: flex; gap: 10px; margin-bottom: 20px; align-items: center; }
+    .action-row select { 
+      flex: 1; padding: 15px; border-radius: 12px; border: 2px solid #ddd; 
+      font-size: 1.1rem; font-weight: bold; background: white; outline: none;
+      height: 54px; /* 버튼과 높이 통일 */
+    }
+    .btn-special-link { 
+      flex: 1; height: 54px; border-radius: 12px; border: none; 
+      background: var(--special); color: white; font-weight: 800; 
+      font-size: 1rem; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      display: flex; align-items: center; justify-content: center;
+    }
 
-  .sub-item { padding: 18px 24px; display: block; text-decoration: none; color: #444; font-size: 15px; border-bottom: 1px solid #f1f1f5; }
-  .sub-item:last-child { border-bottom: none; }
-</style>
+    .student { 
+      padding: 20px; margin-bottom: 12px; border-radius: 16px; 
+      display: flex; justify-content: space-between; align-items: center; 
+      background: white; box-shadow: 0 4px 10px rgba(0,0,0,0.06); 
+      border-left: 8px solid #ddd; cursor: pointer;
+    }
+    .student .name { font-size: 1.3rem; font-weight: 800; }
+    .cat-tag { font-size: 0.85rem; color: #777; background: #f0f0f0; padding: 2px 8px; border-radius: 6px; }
+    
+    .status-badge { padding: 8px 15px; border-radius: 20px; font-weight: 800; font-size: 0.95rem; color: white; }
+
+    .waiting { border-left-color: var(--w-b); } .waiting .status-badge { background: var(--w-b); }
+    .boarded { border-left-color: var(--b-b); background: #f1fbf1; } .boarded .status-badge { background: var(--b-b); }
+    .done { border-left-color: var(--d-b); opacity: 0.7; } .done .status-badge { background: var(--d-b); }
+    .special-status { border-left-color: var(--special); background: #fff8e1; } 
+    .special-status .status-badge { background: var(--special); }
+
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
+    .modal-content { background: white; padding: 25px; border-radius: 20px; width: 85%; max-width: 350px; text-align: center; }
+    .modal-btn { width: 100%; padding: 15px; margin-bottom: 10px; border: none; border-radius: 12px; font-size: 1.1rem; font-weight: bold; cursor: pointer; }
+    .btn-absent { background: #f44336; color: white; }
+    .btn-individual { background: #FF9800; color: white; }
+    .btn-cancel { background: #eee; color: #333; }
+  </style>
 </head>
 <body>
 
-<div class="wrapper">
-  <a href="index.html" class="back-btn">◀ 메인으로 돌아가기</a>
-  <div class="header">
-    <h1>학부모 서비스 센터</h1>
-  </div>
+<h2>🚐 Smart-Poly 안심 알리미</h2>
 
-  <div class="accordion-item" onclick="this.classList.toggle('active')">
-    <div class="accordion-header">
-      <span class="title-text">📝 등/하원 변동 신고</span>
-      <div class="arrow"></div>
-    </div>
-    <div class="accordion-content">
-      <a href="#" class="sub-item">XXX학생 금일 개별등원합니다</a>
-      <a href="#" class="sub-item">XXX학생 금일 개별하원합니다</a>
-      <a href="#" class="sub-item">XXX학생 금일 결석합니다</a>
-    </div>
-  </div>
+<div class="search-box">
+  <input type="text" id="searchInput" placeholder="아이 이름 입력" onkeyup="if(event.keyCode==13) renderList()">
+  <button onclick="renderList()">찾기</button>
+</div>
 
-  <div class="accordion-item" onclick="this.classList.toggle('active')">
-    <div class="accordion-header">
-      <span class="title-text">📩 학원 전달 사항</span>
-      <div class="arrow"></div>
-    </div>
-    <div class="accordion-content">
-      <a href="#" class="sub-item">민원 제출</a>
-      <a href="#" class="sub-item">첨부서류 제출 (병결 진단서 등)</a>
-    </div>
-  </div>
+<div class="action-row">
+  <select id="routeSelect" onchange="renderList()">
+    <option value="1">1호차</option>
+    <option value="2">2호차</option>
+    <option value="3">3호차</option>
+    <option value="4">4호차</option>
+    <option value="5">5호차</option>
+  </select>
+  <button class="btn-special-link" onclick="openSpecialForm()">📝 특이사항 알림</button>
+</div>
 
-  <div class="accordion-item" onclick="this.classList.toggle('active')">
-    <div class="accordion-header">
-      <span class="title-text">🔍 셔틀 위치 확인</span>
-      <div class="arrow"></div>
-    </div>
-    <div class="accordion-content">
-      <a href="#" class="sub-item">XX캠퍼스 X호차 현재위치 보기</a>
-      <a href="#" class="sub-item" style="font-size: 13px; color: #888;">* 지도 앱과 연결하여 실시간 확인</a>
-    </div>
-  </div>
+<div id="list"></div>
 
-  <div class="accordion-item" onclick="this.classList.toggle('active')">
-    <div class="accordion-header">
-      <span class="title-text">🔔 알림장/공지 확인</span>
-      <div class="arrow"></div>
-    </div>
-    <div class="accordion-content">
-      <a href="#" class="sub-item">전체 공지사항 읽기</a>
-      <a href="#" class="sub-item">내 아이 알림장 확인</a>
-    </div>
+<div id="statusModal" class="modal">
+  <div class="modal-content">
+    <h3 id="modalTargetName" style="margin-bottom:20px;">학생 상태 변경</h3>
+    <button class="modal-btn btn-individual" onclick="updateSpecial('개별등원')">1. 개별등원</button>
+    <button class="modal-btn btn-individual" onclick="updateSpecial('개별하원')">2. 개별하원</button>
+    <button class="modal-btn btn-absent" onclick="updateSpecial('결석')">3. 결석</button>
+    <button class="modal-btn btn-cancel" onclick="closeModal()">닫기</button>
   </div>
 </div>
 
+<script>
+const specialFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSdQXa5Lo30iMufm9KHt_RpH6y5GxSaCXUgXLwRdtbm8Q0ukDw/viewform";
+const API_URL = "https://script.google.com/macros/s/AKfycbzK4xAXWBt1uq0l74sF1M0VWRZeiDImlfjMAJBtZFPeEGp9zGZjTX3Y1_D4k0eY6wR80g/exec";
+let students = [];
+let selectedStudent = null;
+
+function openSpecialForm() {
+  if(specialFormUrl.startsWith('http')) window.open(specialFormUrl, '_blank');
+  else alert('특이사항 설문지 주소를 설정해주세요!');
+}
+
+async function loadData() {
+  try {
+    const res = await fetch(API_URL);
+    students = await res.json();
+    renderList();
+  } catch (e) { console.error("데이터 로드 실패"); }
+}
+
+function openModal(name) {
+  selectedStudent = name;
+  document.getElementById("modalTargetName").innerText = name + " 학생";
+  document.getElementById("statusModal").style.display = "flex";
+}
+
+function closeModal() { document.getElementById("statusModal").style.display = "none"; }
+
+async function updateSpecial(status) {
+  if(!confirm(`'${selectedStudent}' 학생을 [${status}] 상태로 변경할까요?`)) return;
+  const idx = students.findIndex(s => s.name === selectedStudent);
+  if(idx > -1) students[idx].status = status;
+  renderList();
+  closeModal();
+  await fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify({ action: 'updateStatus', name: selectedStudent, status: status })
+  });
+}
+
+function renderList() {
+  const list = document.getElementById("list");
+  const bus = document.getElementById("routeSelect").value;
+  list.innerHTML = "";
+  
+  const search = document.getElementById("searchInput").value.trim();
+  let filtered = students.filter(s => String(s.bus).includes(bus));
+  if (search) filtered = filtered.filter(s => s.name.includes(search));
+
+  filtered.forEach((s) => {
+    const div = document.createElement("div");
+    const st = s.status || 'waiting';
+    let isSpecial = ['개별등원', '개별하원', '결석'].includes(st);
+    div.className = `student ${isSpecial ? 'special-status' : st}`;
+    div.onclick = () => openModal(s.name);
+    
+    div.innerHTML = `
+      <div class="info">
+        <span class="name">${s.name}</span><br>
+        <span class="cat-tag">${s.category}</span>
+      </div>
+      <div class="status-badge">${st === 'waiting' ? '미탑승' : st === 'boarded' ? '탑승완료' : st === 'done' ? '하차완료' : st}</div>
+    `;
+    list.appendChild(div);
+  });
+}
+
+setInterval(loadData, 15000);
+loadData();
+</script>
 </body>
 </html>
