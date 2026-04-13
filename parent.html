@@ -17,12 +17,11 @@
     .search-box input { flex: 1; padding: 15px; border-radius: 12px; border: 2px solid #ddd; font-size: 1.1rem; outline: none; }
     .search-box button { padding: 0 15px; border-radius: 12px; border: none; background: var(--primary); color: white; font-weight: bold; cursor: pointer; }
 
-    /* ↕️ 가로 나란히 배치 스타일 */
     .action-row { display: flex; gap: 10px; margin-bottom: 20px; align-items: center; }
     .action-row select { 
       flex: 1; padding: 15px; border-radius: 12px; border: 2px solid #ddd; 
       font-size: 1.1rem; font-weight: bold; background: white; outline: none;
-      height: 54px; /* 버튼과 높이 통일 */
+      height: 54px;
     }
     .btn-special-link { 
       flex: 1; height: 54px; border-radius: 12px; border: none; 
@@ -48,6 +47,9 @@
     .special-status { border-left-color: var(--special); background: #fff8e1; } 
     .special-status .status-badge { background: var(--special); }
 
+    /* 안내 메시지 스타일 */
+    .placeholder-msg { text-align: center; color: #888; margin-top: 50px; line-height: 1.6; }
+
     .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
     .modal-content { background: white; padding: 25px; border-radius: 20px; width: 85%; max-width: 350px; text-align: center; }
     .modal-btn { width: 100%; padding: 15px; margin-bottom: 10px; border: none; border-radius: 12px; font-size: 1.1rem; font-weight: bold; cursor: pointer; }
@@ -61,7 +63,7 @@
 <h2>🚐 Smart-Poly 안심 알리미</h2>
 
 <div class="search-box">
-  <input type="text" id="searchInput" placeholder="아이 이름 입력" onkeyup="if(event.keyCode==13) renderList()">
+  <input type="text" id="searchInput" placeholder="아이 이름을 입력하세요" onkeyup="if(event.keyCode==13) renderList()">
   <button onclick="renderList()">찾기</button>
 </div>
 
@@ -76,7 +78,9 @@
   <button class="btn-special-link" onclick="openSpecialForm()">📝 특이사항 알림</button>
 </div>
 
-<div id="list"></div>
+<div id="list">
+    <div class="placeholder-msg">정보 보호를 위해<br><b>아이 이름을 입력 후 찾기</b>를 눌러주세요.</div>
+</div>
 
 <div id="statusModal" class="modal">
   <div class="modal-content">
@@ -103,7 +107,7 @@ async function loadData() {
   try {
     const res = await fetch(API_URL);
     students = await res.json();
-    renderList();
+    // 데이터만 불러오고 renderList()는 호출하지 않음 (보안)
   } catch (e) { console.error("데이터 로드 실패"); }
 }
 
@@ -130,11 +134,24 @@ async function updateSpecial(status) {
 function renderList() {
   const list = document.getElementById("list");
   const bus = document.getElementById("routeSelect").value;
+  const search = document.getElementById("searchInput").value.trim();
+
+  // 검색어가 없을 경우 목록을 비우고 안내 문구 출력
+  if (!search) {
+    list.innerHTML = `<div class="placeholder-msg">아이 이름을 입력해야 정보를 확인할 수 있습니다.</div>`;
+    return;
+  }
+
   list.innerHTML = "";
   
-  const search = document.getElementById("searchInput").value.trim();
-  let filtered = students.filter(s => String(s.bus).includes(bus));
-  if (search) filtered = filtered.filter(s => s.name.includes(search));
+  // 1. 해당 호차 필터링
+  // 2. 검색어 포함 여부 필터링
+  let filtered = students.filter(s => String(s.bus).includes(bus) && s.name.includes(search));
+
+  if (filtered.length === 0) {
+    list.innerHTML = `<div class="placeholder-msg">검색 결과가 없습니다.<br>이름과 호차를 확인해주세요.</div>`;
+    return;
+  }
 
   filtered.forEach((s) => {
     const div = document.createElement("div");
@@ -154,6 +171,7 @@ function renderList() {
   });
 }
 
+// 실시간 데이터 업데이트는 하되, 화면 갱신은 검색어가 있을 때만 동작하도록 renderList 내부에서 처리됨
 setInterval(loadData, 15000);
 loadData();
 </script>
