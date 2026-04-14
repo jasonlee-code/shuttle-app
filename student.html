@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>셔틀 통합 관리 v14</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background-color: #f4f7f9; padding: 15px; font-family: 'Malgun Gothic', sans-serif; }
+    /* 새로 추가된 상단 버튼 영역 스타일 */
+    .top-nav { margin-bottom: 15px; display: flex; gap: 10px; }
+    
+    .card { border-radius: 12px; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.06); margin-bottom: 15px; padding: 18px; background: white; }
+    .section-title { font-weight: bold; color: #333; border-left: 5px solid #0d6efd; padding-left: 12px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+    .bus-card { cursor: pointer; background: #fff; border: 1px solid #dee2e6; border-radius: 10px; padding: 10px; margin: 4px; flex: 1 1 120px; text-align: center; }
+    .bus-card.active { border-color: #0d6efd; background-color: #e7f1ff; box-shadow: inset 0 0 0 1px #0d6efd; }
+    .note-row { background-color: #e3f2fd !important; }
+    .badge-note { background-color: #0097a7; color: #fff; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; display: inline-block; margin-bottom: 3px; }
+    .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); display: none; justify-content: center; align-items: center; z-index: 9999; }
+    label { font-size: 0.8rem; font-weight: bold; color: #666; }
+    .bulk-area { border: 2px dashed #0d6efd; padding: 15px; border-radius: 10px; margin-top: 15px; background: #f8faff; }
+  </style>
+</head>
+<body>
+
+<div id="loading" class="loading-overlay"><div class="spinner-border text-primary"></div></div>
+
+<div class="container-fluid">
+  
+
+
+
+
+<div class="top-nav">
+  <button class="btn btn-primary fw-bold" onclick="window.open('https://docs.google.com/spreadsheets/d/1y5I-WpIPXNQVHnai6TLiih5V7lqDU71ACii2tgf4dls/edit?gid=0#gid=0')">📊 데이터 관리 센터 이동</button>
+</div>
+
+
+
+
+
+  <div class="card">
+    <div class="section-title"><span>실시간 호차 현황</span> <button class="btn btn-sm btn-dark" onclick="showBusMgr()">⚙️ 호차 설정</button></div>
+    <div id="busStatusArea" class="d-flex flex-wrap"></div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="card">
+        <div class="section-title small text-primary">정보 등록/수정</div>
+        <form id="regForm" class="row g-2">
+          <input type="hidden" id="rowNum">
+          <div class="col-12"><label>구분</label>
+            <select id="inType" class="form-select">
+              <option value="유치부">유치부</option>
+              <option value="초등 1st(매일)">초등 1st(매일)</option>
+              <option value="초등 2st(주 3회)">초등 2st(주 3회)</option>
+              <option value="초등 2st(주 2회)">초등 2st(주 2회)</option>
+              <option value="초등 3st(주 3회)">초등 3st(주 3회)</option>
+              <option value="초등 3st(주 2회)">초등 3st(주 2회)</option>
+              <option value="중고등부">중고등부</option>
+            </select>
+          </div>
+          <div class="col-6"><label>학생명</label><input type="text" id="inName" class="form-control"></div>
+          <div class="col-6"><label>요일</label>
+            <select id="inDay" class="form-select">
+              <option value="매일">매일</option><option value="월수금">월수금</option><option value="화목">화목</option>
+              <option value="월수">월수</option><option value="수금">수금</option><option value="월금">월금</option>
+            </select>
+          </div>
+          <div class="col-6"><label>등원지</label><input type="text" id="pLoc" class="form-control"></div>
+          <div class="col-6"><label>등원차</label><select id="pBus" class="form-select"></select></div>
+          <div class="col-6"><label>하원지</label><input type="text" id="dLoc" class="form-control"></div>
+          <div class="col-6"><label>하원차</label><select id="dBus" class="form-select"></select></div>
+          <div class="col-12"><label>비고</label><input type="text" id="inNote" class="form-control"></div>
+          <button type="button" onclick="saveData()" class="btn btn-primary w-100 mt-2">개별 저장</button>
+          <button type="button" onclick="resetForm()" id="btnCancel" class="btn btn-secondary w-100 d-none mt-1">취소</button>
+        </form>
+
+        <div class="bulk-area text-center mt-3">
+          <label class="d-block mb-2 text-primary">📊 엑셀 일괄 등록</label>
+          <div class="btn-group w-100">
+            <button class="btn btn-sm btn-outline-primary" onclick="downloadTemplate()">양식 다운로드</button>
+            <button class="btn btn-sm btn-success" onclick="document.getElementById('csvInput').click()">파일 업로드</button>
+          </div>
+          <input type="file" id="csvInput" accept=".csv" style="display:none" onchange="uploadCsv(this)">
+          <small class="text-muted d-block mt-2" style="font-size:0.7rem">※ 다운로드 받은 양식(CSV)에 맞춰 작성하세요.</small>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title small">데이터 필터링</div>
+        <div class="row g-2">
+          <div class="col-6"><select id="fType" onchange="filterData()" class="form-select form-select-sm"></select></div>
+          <div class="col-6"><select id="fDay" onchange="filterData()" class="form-select form-select-sm"></select></div>
+          <div class="col-6"><select id="fPLoc" onchange="filterData()" class="form-select form-select-sm"></select></div>
+          <div class="col-6"><select id="fDLoc" onchange="filterData()" class="form-select form-select-sm"></select></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-8">
+      <div class="card">
+        <input type="text" id="searchName" oninput="filterData()" class="form-control mb-3" placeholder="찾으시는 학생 이름을 입력하세요...">
+        <div class="table-responsive">
+          <table class="table align-middle">
+            <thead class="table-light"><tr><th>학생/구분</th><th>요일</th><th>등원</th><th>하원</th><th>비고/관리</th></tr></thead>
+            <tbody id="studentTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycby_yytXWgdBokT0PQ40JsgeHQ4Zkxl-KtjjJkh4phb9_xCYmjJDMmPQ38-8EEm4dqQWPA/exec";
+  let allStudents = [], allBuses = [], selectedBus = "";
+
+  window.onload = loadData;
+
+  function loadData() {
+    toggleLoading(true);
+    fetch(WEB_APP_URL).then(res => res.json()).then(data => {
+      allStudents = data.students; allBuses = data.busStatus;
+      renderBusStatus(); setupFilters(); filterData();
+      toggleLoading(false);
+    });
+  }
+
+  function downloadTemplate() {
+    const headers = "구분,이름,요일,등원지,등원시간,등원차,하원지,하원시간,하원차,비고\n";
+    const example = "초등 1st(매일),홍길동,매일,자이아파트,14:00,1호차,자이아파트,16:00,1호차,";
+    const csvContent = "\ufeff" + headers + example; 
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute("download", "셔틀등록양식.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  function uploadCsv(input) {
+    const file = input.files[0];
+    if(!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const content = e.target.result;
+      const rows = content.split("\n")
+        .slice(1) 
+        .map(row => row.split(",").map(cell => cell.trim()))
+        .filter(row => row.length >= 2 && row[1] !== "");
+
+      if(rows.length === 0) return alert("등록할 데이터가 없습니다.");
+
+      if(confirm(rows.length + "명의 학생을 일괄 등록하시겠습니까?")) {
+        toggleLoading(true);
+        fetch(WEB_APP_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: "bulkUpload", rows: rows })
+        }).then(() => {
+          alert("일괄 등록 완료!");
+          input.value = "";
+          loadData();
+        });
+      }
+    };
+    reader.readAsText(file, "EUC-KR"); 
+  }
+
+  function filterData() {
+    const nameS = document.getElementById('searchName').value.toLowerCase();
+    const tF = document.getElementById('fType').value, dF = document.getElementById('fDay').value;
+    const pLF = document.getElementById('fPLoc').value, dLF = document.getElementById('fDLoc').value;
+    const tbody = document.getElementById('studentTable');
+    tbody.innerHTML = '';
+
+    allStudents.forEach(s => {
+      const bM = !selectedBus || s.pBus === selectedBus || s.dBus === selectedBus;
+      const nM = s.name.toLowerCase().includes(nameS);
+      const fM = (!tF || s.type === tF) && (!dF || s.dayInfo === dF) && (!pLF || s.pLoc === pLF) && (!dLF || s.dLoc === dLF);
+      
+      if (bM && nM && fM) {
+        let rowCls = s.hasNote ? "note-row" : "";
+        tbody.innerHTML += `<tr class="${rowCls}">
+          <td>${s.hasNote?'<span class="badge-note">💡 비고</span><br>':''}<strong>${s.name}</strong><br><small class="text-muted">${s.type}</small></td>
+          <td>${s.dayInfo}</td>
+          <td>${s.pLoc}<br><b>${s.pBus}</b></td>
+          <td>${s.dLoc}<br><b>${s.dBus}</b></td>
+          <td><div style="font-size:0.8rem;color:#555;margin-bottom:5px">${s.note||''}</div>
+            <button class="btn btn-sm btn-outline-primary" onclick="editMode(${s.rowNum})">수정</button>
+            <button class="btn btn-sm btn-outline-danger" onclick="deleteStudent(${s.rowNum},'${s.name}')">삭제</button></td>
+        </tr>`;
+      }
+    });
+  }
+
+  function saveData() {
+    const payload = {
+      action: document.getElementById('rowNum').value ? "update" : "insert", 
+      rowNum: document.getElementById('rowNum').value,
+      type: document.getElementById('inType').value, name: document.getElementById('inName').value,
+      day: document.getElementById('inDay').value, pLoc: document.getElementById('pLoc').value,
+      pBus: document.getElementById('pBus').value, dLoc: document.getElementById('dLoc').value,
+      dBus: document.getElementById('dBus').value, note: document.getElementById('inNote').value,
+      pTime: "", dTime: ""
+    };
+    toggleLoading(true); fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify(payload) }).then(() => { resetForm(); loadData(); });
+  }
+
+  function deleteStudent(rowNum, name) {
+    if(!confirm(name + " 학생을 삭제하시겠습니까?")) return;
+    toggleLoading(true);
+    fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({action:"deleteStudent", rowNum}) }).then(() => loadData());
+  }
+
+  function editMode(rowNum) {
+    const s = allStudents.find(i => i.rowNum == rowNum);
+    document.getElementById('rowNum').value = rowNum;
+    document.getElementById('inType').value = s.type; document.getElementById('inName').value = s.name;
+    document.getElementById('inDay').value = s.dayInfo; document.getElementById('pLoc').value = s.pLoc;
+    document.getElementById('pBus').value = s.pBus; document.getElementById('dLoc').value = s.dLoc;
+    document.getElementById('dBus').value = s.dBus; document.getElementById('inNote').value = s.note;
+    document.getElementById('btnCancel').classList.remove('d-none'); window.scrollTo(0,0);
+  }
+
+  function renderBusStatus() {
+    const area = document.getElementById('busStatusArea'), pb = document.getElementById('pBus'), db = document.getElementById('dBus');
+    area.innerHTML = `<div class="bus-card ${selectedBus===''?'active':''}" onclick="selectedBus='';renderBusStatus();filterData();"><strong>전체</strong></div>`;
+    pb.innerHTML = ''; db.innerHTML = '';
+    allBuses.forEach(b => {
+      area.innerHTML += `<div class="bus-card ${selectedBus===b.name?'active':''}" onclick="selectedBus='${b.name}';renderBusStatus();filterData();"><strong>${b.name}</strong><br><small>${b.pCount}/${b.dCount}</small></div>`;
+      pb.innerHTML += `<option value="${b.name}">${b.name}</option>`;
+      db.innerHTML += `<option value="${b.name}">${b.name}</option>`;
+    });
+  }
+
+  function setupFilters() {
+    const pS = new Set(), dS = new Set(), tS = new Set(), dyS = new Set();
+    allStudents.forEach(s => { pS.add(s.pLoc); dS.add(s.dLoc); tS.add(s.type); dyS.add(s.dayInfo); });
+    const fill = (id, set, label) => {
+      const el = document.getElementById(id), val = el.value;
+      el.innerHTML = `<option value="">전체 ${label}</option>`;
+      set.forEach(v => { if(v) el.innerHTML += `<option value="${v}">${v}</option>`; });
+      el.value = val;
+    };
+    fill('fPLoc', pS, '등원지'); fill('fDLoc', dS, '하원지'); fill('fType', tS, '구분'); fill('fDay', dyS, '요일');
+  }
+
+  function resetForm() { document.getElementById('regForm').reset(); document.getElementById('rowNum').value = ""; document.getElementById('btnCancel').classList.add('d-none'); }
+  function toggleLoading(v) { document.getElementById('loading').style.display = v ? 'flex' : 'none'; }
+  function showBusMgr() { /* 기존 호차 모달 로직 동일 */ }
+</script>
+</body>
+</html>
