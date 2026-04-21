@@ -190,34 +190,28 @@
     </div>
   </div>
 
-  <div class="accordion-item" onclick="toggleAccordion(this)">
+  <a href="https://docs.google.com/spreadsheets/d/1Y276IF0wsiA06CXy8WVOW8UpCjaRJenSdg7BYe3wDy0/edit?gid=2000086756#gid=2000086756" class="link-item">
     <div class="accordion-header">
       <div class="icon-circle">⚙️</div>
-      <span class="title-text">설정/관리</span>
-      <div class="arrow"></div>
+      <span class="title-text">DB관리</span>
+      <div class="arrow" style="transform: rotate(-45deg); border-color: var(--accent-admin);"></div>
     </div>
-    <div class="accordion-content">
-      <a href="#" class="sub-item">셔틀 정보 수정 (차량/기사)</a>
-      <a href="#" class="sub-item">관리자 계정 설정</a>
-    </div>
-  </div>
+  </a>
 
-  <div class="accordion-item" onclick="toggleAccordion(this)">
+  <a href="https://warningf82-gif.github.io/shuttle-admin/shuttle_admin.html" class="link-item">
     <div class="accordion-header">
       <div class="icon-circle">📈</div>
       <span class="title-text">노선 분석</span>
-      <div class="arrow"></div>
+      <div class="arrow" style="transform: rotate(-45deg); border-color: var(--accent-admin);"></div>
     </div>
-    <div class="accordion-content">
-      <a href="#" class="sub-item">노선별 효율성 리포트</a>
-      <a href="#" class="sub-item">정류장 혼잡도 분석</a>
-    </div>
-  </div>
+  </a>
 
 </div>
 
 <script>
   function toggleAccordion(element) {
+    if (!element.classList.contains('accordion-item')) return;
+
     const items = document.querySelectorAll('.accordion-item');
     items.forEach(item => {
       if (item !== element) {

@@ -11,9 +11,12 @@
     .search-box { display: flex; gap: 8px; margin-bottom: 12px; }
     .search-box input { flex: 1; padding: 15px; border-radius: 12px; border: 2px solid #ddd; font-size: 1.1rem; outline: none; box-sizing: border-box; }
     .search-box button { padding: 0 20px; border-radius: 12px; border: none; background: var(--primary); color: white; font-weight: bold; cursor: pointer; }
+    .mode-row { display: flex; gap: 10px; margin-bottom: 10px; }
+    .mode-btn { flex: 1; padding: 12px; border-radius: 10px; border: 2px solid #eee; background: white; font-weight: bold; cursor: pointer; }
+    .mode-btn.active { border-color: var(--primary); background: #e3f2fd; color: var(--primary); }
     .action-row { display: flex; gap: 10px; margin-bottom: 20px; align-items: center; }
     .action-row select { flex: 1; padding: 0 15px; border-radius: 12px; border: 2px solid #ddd; font-size: 1.1rem; font-weight: bold; background: white; outline: none; height: 54px; }
-    .btn-special-link { flex: 1; height: 54px; border-radius: 12px; border: none; background: var(--special); color: white; font-weight: 800; font-size: 1rem; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center; }
+    .btn-special-link { flex: 1; height: 54px; border-radius: 12px; border: none; background: var(--special); color: white; font-weight: 800; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; text-decoration: none; }
     .student { padding: 20px; margin-bottom: 12px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; background: white; box-shadow: 0 4px 10px rgba(0,0,0,0.06); border-left: 8px solid #ddd; cursor: pointer; }
     .student .name { font-size: 1.3rem; font-weight: 800; }
     .cat-tag { font-size: 0.85rem; color: #777; background: #f0f0f0; padding: 2px 8px; border-radius: 6px; margin-top: 4px; display: inline-block; }
@@ -29,57 +32,103 @@
 </head>
 <body>
 
-
 <div class="top-nav">
-  <button class="btn btn-primary fw-bold" onclick="window.open('https://docs.google.com/spreadsheets/d/1nBJ5kgt8CZLji20XJmgVYU0mtDZjXBEZTD39hDD4nV8/edit?usp=drivesdk')">📊 데이터 관리 센터 이동</button>
-</div>
+<button class="btn btn-primary fw-bold" onclick="window.open('https://docs.google.com/spreadsheets/d/1Y276IF0wsiA06CXy8WVOW8UpCjaRJenSdg7BYe3wDy0/edit?gid=2000086756#gid=2000086756')">📊 데이터 관리 센터 이동</button>
 
+<br>    <a href="index.html" class="back-btn">⇠ 메인 화면으로</a>
 
 <h2>🚐 Smart-Poly 안심 알리미</h2>
+
 <div class="search-box">
   <input type="text" id="searchInput" placeholder="아이 이름을 입력하세요" onkeyup="if(event.keyCode==13) renderList()">
   <button onclick="renderList()">찾기</button>
 </div>
+
+<div class="mode-row">
+  <button id="btnIn" class="mode-btn active" onclick="setMode('등원')">🏠 등원 확인</button>
+  <button id="btnOut" class="mode-btn" onclick="setMode('하원')">🚌 하원 확인</button>
+</div>
+
 <div class="action-row">
   <select id="routeSelect" onchange="renderList()">
-    <option value="1호차">1호차</option>
-    <option value="2호차">2호차</option>
-    <option value="3호차">3호차</option>
-    <option value="4호차">4호차</option>
-    <option value="5호차">5호차</option>
+    <option value="">호차 로딩중...</option>
   </select>
   <button class="btn-special-link" onclick="openSpecialForm()">📝 특이사항 알림</button>
 </div>
+
 <div id="list"><div class="placeholder-msg">정보 보호를 위해<br><b>아이 이름을 입력 후 찾기</b>를 눌러주세요.</div></div>
 
 <div id="statusModal" class="modal">
   <div class="modal-content">
     <h3 id="modalTargetName" style="margin-bottom:20px;">학생 상태 변경</h3>
-    <button class="modal-btn" style="background:var(--special); color:white;" onclick="updateSpecial('개별등원')">1. 개별등원</button>
-    <button class="modal-btn" style="background:var(--special); color:white;" onclick="updateSpecial('개별하원')">2. 개별하원</button>
-    <button class="modal-btn" style="background:#f44336; color:white;" onclick="updateSpecial('결석')">3. 결석</button>
+    <div id="inModeButtons">
+      <button class="modal-btn" style="background:var(--special); color:white;" onclick="updateSpecial('개별등원')">1. 개별등원</button>
+      <button class="modal-btn" style="background:#f44336; color:white;" onclick="updateSpecial('결석')">2. 결석</button>
+    </div>
+    <div id="outModeButtons" style="display:none;">
+      <button class="modal-btn" style="background:var(--special); color:white;" onclick="updateSpecial('개별하원')">1. 개별하원</button>
+    </div>
     <button class="modal-btn" style="background:#eee;" onclick="closeModal()">닫기</button>
   </div>
 </div>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbzLF8WSxDzmjwMjfYYoM9vGwGqYXKxeAL_tiJpUAxTtINEdPQ7u3uhCSulQXChTa2hG0Q/exec";
+// 배포한 새 주소를 아래에 넣으세요
+const API_URL = "https://script.google.com/macros/s/AKfycbxJ5uqtJk1iGrA57m0ap4hyJgJ5aAN67OV0_xFXAKmdc4aY-PS7Wm5g8z_QDsRMHYFjDA/exec";
 const specialFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSdQXa5Lo30iMufm9KHt_RpH6y5GxSaCXUgXLwRdtbm8Q0ukDw/viewform";
 
 let students = [];
+let busList = [];
 let selectedStudent = null;
+let currentMode = "등원";
 
 async function loadData() {
   try {
     const res = await fetch(`${API_URL}?t=${Date.now()}`);
-    students = await res.json();
-    console.log("데이터 동기화 성공");
-  } catch (e) { console.error("데이터 로드 실패"); }
+    const result = await res.json();
+    students = result.students || [];
+    busList = result.busStatus || [];
+    
+    updateBusSelect(); // 호차 목록 업데이트
+    if (document.getElementById("searchInput").value.trim()) renderList();
+  } catch (e) { console.error("데이터 로드 실패", e); }
+}
+
+// 호차 셀렉트 박스 동적 생성
+function updateBusSelect() {
+  const select = document.getElementById("routeSelect");
+  const currentValue = select.value;
+  select.innerHTML = "";
+
+  // 호차 이름순 정렬
+  busList.sort((a, b) => {
+    const numA = parseInt(a.name.replace(/[^0-9]/g, "")) || 0;
+    const numB = parseInt(b.name.replace(/[^0-9]/g, "")) || 0;
+    return numA - numB;
+  });
+
+  busList.forEach(bus => {
+    const opt = document.createElement("option");
+    opt.value = bus.name;
+    opt.innerText = bus.name;
+    if(bus.name === currentValue) opt.selected = true;
+    select.appendChild(opt);
+  });
+}
+
+function setMode(mode) {
+  currentMode = mode;
+  document.getElementById('btnIn').classList.toggle('active', mode === '등원');
+  document.getElementById('btnOut').classList.toggle('active', mode === '하원');
+  document.getElementById('inModeButtons').style.display = (mode === '등원') ? 'block' : 'none';
+  document.getElementById('outModeButtons').style.display = (mode === '하원') ? 'block' : 'none';
+  renderList();
 }
 
 function renderList() {
   const list = document.getElementById("list");
-  const selectedBus = document.getElementById("routeSelect").value;
+  const select = document.getElementById("routeSelect");
+  const selectedBus = select.value ? select.value.replace(/[^0-9]/g, "").trim() : "";
   const search = document.getElementById("searchInput").value.trim();
 
   if (!search) {
@@ -89,34 +138,25 @@ function renderList() {
 
   list.innerHTML = "";
   
-  // [개선된 필터링] 시트의 호차가 '1'이든 '1호차'든 모두 검색 가능하게 수정
   let filtered = students.filter(s => {
-    const sBus = String(s.bus);
-    const busMatch = (sBus === selectedBus || sBus === selectedBus.replace("호차", ""));
-    const nameMatch = s.name.includes(search);
+    // 하원 필드명 bus, dBus 둘 다 대응
+    const targetBusRaw = (currentMode === "등원") ? s.pBus : (s.bus || s.dBus);
+    const targetBus = String(targetBusRaw || "");
+    const busMatch = targetBus.includes(selectedBus);
+    const nameMatch = s.name.replace(/\s+/g, '').includes(search.replace(/\s+/g, ''));
     return busMatch && nameMatch;
   });
 
   if (filtered.length === 0) {
-    list.innerHTML = `<div class="placeholder-msg">검색 결과가 없습니다.<br>호차(${selectedBus})와 이름을 확인해주세요.</div>`;
+    list.innerHTML = `<div class="placeholder-msg">해당 호차에 검색된 결과가 없습니다.</div>`;
     return;
   }
 
   filtered.forEach((s) => {
     const div = document.createElement("div");
-    const st = s.status || 'waiting';
-    
-    let statusClass = 'waiting';
-    let displayStatus = '미탑승';
-    
-    // 기사님 앱과 상태값 동기화
-    if (st === 'boarded' || st === '탑승') {
-      statusClass = 'boarded';
-      displayStatus = '탑승완료';
-    } else if (['개별등원', '개별하원', '결석'].includes(st)) {
-      statusClass = 'special-status';
-      displayStatus = st;
-    }
+    const st = (currentMode === "등원") ? (s.inStatus || '미탑승') : (s.outStatus || '미탑승');
+    let statusClass = (st === '탑승') ? 'boarded' : (['개별등원', '개별하원', '결석'].includes(st) ? 'special-status' : 'waiting');
+    let displayStatus = (st === '탑승') ? (currentMode === "등원" ? '등원완료' : '하원완료') : st;
     
     div.className = `student ${statusClass}`;
     div.onclick = () => {
@@ -139,26 +179,26 @@ function renderList() {
 async function updateSpecial(status) {
   if(!confirm(`'${selectedStudent}' 학생을 [${status}] 상태로 변경할까요?`)) return;
   
-  // UI 즉시 업데이트
   const idx = students.findIndex(s => s.name === selectedStudent);
-  if(idx > -1) students[idx].status = status;
+  if(idx > -1) {
+    if(currentMode === "등원") students[idx].inStatus = status;
+    else students[idx].outStatus = status;
+  }
   renderList();
   closeModal();
 
-  // 서버 전송
   fetch(API_URL, {
     method: 'POST',
     mode: 'no-cors',
-    body: JSON.stringify({ action: 'updateStatus', name: selectedStudent, status: status })
+    body: JSON.stringify({ action: 'updateStatus', name: selectedStudent, status: status, type: currentMode })
   });
-  
-  setTimeout(loadData, 2000); // 2초 뒤 백그라운드 갱신
 }
 
 function closeModal() { document.getElementById("statusModal").style.display = "none"; }
 function openSpecialForm() { window.open(specialFormUrl, '_blank'); }
 
-setInterval(loadData, 15000);
+// 10초마다 자동 새로고침 (데이터 동기화)
+setInterval(loadData, 10000);
 loadData();
 </script>
 </body>

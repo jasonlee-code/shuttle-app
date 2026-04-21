@@ -3,209 +3,261 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Smart-Poly 관제 v12.6 FINAL</title>
+  <title>Smart-Poly 관제 v12.9 (한글화)</title>
   <style>
     :root { --w-b: #ff5252; --b-b: #4caf50; --primary: #2196F3; --special: #FF9800; --bg: #f8f9fa; }
     body { font-family: 'Pretendard', sans-serif; padding: 10px; background: var(--bg); max-width: 500px; margin: 0 auto; -webkit-tap-highlight-color: transparent; }
-    
-    /* 롱프레스 시 텍스트 선택 방지 */
-    * { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+    * { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; box-sizing: border-box; }
 
-    .section { background: white; border-radius: 15px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .section { background: white; border-radius: 15px; padding: 15px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
     .section-title { font-size: 0.85rem; font-weight: bold; color: var(--primary); margin-bottom: 10px; }
 
-    select, input[type="text"] { width: 100%; padding: 14px; border-radius: 10px; border: 1.5px solid #eee; font-size: 1rem; font-weight: bold; outline: none; box-sizing: border-box; background: #fff; }
-    
-    .input-group { display: flex; gap: 8px; align-items: center; }
-    .input-group input { flex: 1; -webkit-user-select: text; user-select: text; }
-    .btn-confirm { width: 80px; padding: 14px 0; background: #333; color: white; border: none; border-radius: 10px; font-weight: 800; cursor: pointer; }
-
-    /* 지연 문자 버튼 복구 */
+    select, input { width: 100%; padding: 14px; border-radius: 10px; border: 1.5px solid #eee; font-size: 1rem; font-weight: bold; outline: none; background: #fff; }
     .btn-delay { background: var(--w-b); width: 100%; color: white; border: none; border-radius: 10px; padding: 15px; font-weight: 800; margin-top: 10px; cursor: pointer; font-size: 1rem; box-shadow: 0 4px 0 #d32f2f; }
-    .btn-delay:active { transform: translateY(3px); box-shadow: none; }
+    
+    .main-cat-container { display: flex; gap: 8px; margin-bottom: 15px; }
+    .main-cat-btn { flex: 1; padding: 15px; border-radius: 12px; border: 2.5px solid #eee; background: white; font-weight: 800; cursor: pointer; font-size: 1rem; transition: 0.2s; }
+    .main-cat-btn.active { border-color: var(--primary); background: #e3f2fd; color: var(--primary); }
 
-    /* 필터 버튼 스타일 복구 */
-    .filter-container { display: flex; gap: 8px; overflow-x: auto; padding: 5px 0 15px 0; scrollbar-width: none; }
-    .filter-btn { padding: 8px 18px; background: white; border: 1.5px solid #eee; border-radius: 25px; white-space: nowrap; font-size: 0.9rem; font-weight: 600; color: #666; cursor: pointer; }
+    .filter-container { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 12px; scrollbar-width: none; }
+    .filter-btn { padding: 8px 18px; background: white; border: 1.5px solid #eee; border-radius: 20px; white-space: nowrap; font-size: 0.85rem; font-weight: 600; color: #666; }
     .filter-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
 
-    #list { display: none; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-    .student { padding: 15px 5px; border-radius: 15px; background: white; border: 2.5px solid #eee; display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer; min-height: 100px; justify-content: center; }
-    .student .name { font-size: 0.95rem; font-weight: 900; color: #333; }
-    .student .status-text { font-size: 0.75rem; font-weight: bold; margin-top: 8px; }
+    #list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .student { padding: 15px 5px; border-radius: 15px; background: white; border: 2.5px solid #eee; display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer; min-height: 100px; justify-content: center; position: relative; }
+    .student .name { font-size: 0.95rem; font-weight: 900; color: #333; margin: 4px 0; }
+    .student .status-text { font-size: 0.75rem; font-weight: bold; }
 
     .waiting { border-color: #eee; } .waiting .status-text { color: var(--w-b); }
     .boarded { border-color: var(--b-b); background: #f1fbf1; } .boarded .status-text { color: var(--b-b); }
     .special { border-color: var(--special); background: #fff8e1; border-width: 3px; } .special .status-text { color: var(--special); }
 
-    .btn-finish { display: none; width: 100%; padding: 18px; background: #333; color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 1.1rem; margin-top: 20px; }
+    .btn-finish { width: 100%; padding: 18px; background: #333; color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 1.1rem; margin-top: 20px; display: none; }
   </style>
 </head>
 <body>
 
-
-
 <div class="top-nav">
-  <button class="btn btn-primary fw-bold" onclick="window.open('https://docs.google.com/spreadsheets/d/1nBJ5kgt8CZLji20XJmgVYU0mtDZjXBEZTD39hDD4nV8/edit?usp=drivesdk')">📊 데이터 관리 센터 이동</button>
-</div>
+<button class="btn btn-primary fw-bold" onclick="window.open('https://docs.google.com/spreadsheets/d/1Y276IF0wsiA06CXy8WVOW8UpCjaRJenSdg7BYe3wDy0/edit?gid=2000086756#gid=2000086756')">📊 데이터 관리 센터 이동</button>
 
+<br>    <a href="index.html" class="back-btn">⇠ 메인 화면으로</a>
 
-
-<h2 style="text-align:center; font-size: 1.2rem; margin: 20px 0;">🚐 Smart-Poly 통합 관제</h2>
+<h2 style="text-align:center; font-size: 1.2rem; margin: 10px 0;">🚐 Smart-Poly 통합 관제</h2>
 
 <div class="section">
   <div class="section-title" style="color:#888;">운행 차량 설정</div>
-  <select id="routeSelect" onchange="onBusChange()">
-    <option value="1호차">1호차</option>
-    <option value="2호차">2호차</option>
-    <option value="3호차">3호차</option>
-    <option value="4호차">4호차</option>
-    <option value="5호차">5호차</option>
+  <select id="routeSelect" onchange="renderAll()">
+    <option value="">호차 목록 불러오는 중...</option>
   </select>
-  <button class="btn-delay" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSdQXa5Lo30iMufm9KHt_RpH6y5GxSaCXUgXLwRdtbm8Q0ukDw/viewform', '_blank')">⚠️ 지연 문자 발송</button>
+  <button class="btn-delay" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSdQXa5Lo30iMufm9KHt_RpH6y5GxSaCXUgXLwRdtbm8Q0ukDw/viewform')">⚠️ 지연 문자 발송</button>
 </div>
 
-<div id="teacherSection" class="section" style="background: #e3f2fd;">
-  <div class="section-title">안전 선생님 확인</div>
-  <div class="input-group">
-    <input type="text" id="teacherName" placeholder="선생님 성함 입력">
-    <button class="btn-confirm" onclick="activateList()">확인</button>
+<div id="teacherSection" class="section" style="background: #fff9c4;">
+  <div class="section-title">Step 1. 담당 선생님 확인</div>
+  <div style="display:flex; gap:8px;">
+    <input type="text" id="teacherName" placeholder="성함 입력" style="flex:1;">
+    <button onclick="activateList()" style="width:80px; background:#333; color:#fff; border-radius:10px; border:none; font-weight:bold;">확인</button>
   </div>
 </div>
 
-<div id="filterContainer" class="filter-container" style="display:none;"></div>
-<div id="list"></div>
-<button id="finishBtn" class="btn-finish" onclick="finishTrip()">✅ 운행 종료 및 데이터 전송</button>
+<div id="mainUI" style="display:none;">
+  <div class="section-title" style="padding-left:5px;">Step 2. 운행 구분 (등원/하원)</div>
+  <div class="main-cat-container">
+    <button id="btnIn" class="main-cat-btn active" onclick="setMainCat('등원')">🏠 등원</button>
+    <button id="btnOut" class="main-cat-btn" onclick="setMainCat('하원')">🚌 하원</button>
+  </div>
+  <div id="filterContainer" class="filter-container"></div>
+  <div id="list"></div>
+  <button id="finishBtn" class="btn-finish" onclick="finishTrip()">✅ 운행 종료 및 데이터 전송</button>
+</div>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbzLF8WSxDzmjwMjfYYoM9vGwGqYXKxeAL_tiJpUAxTtINEdPQ7u3uhCSulQXChTa2hG0Q/exec"; 
-const TG_TOKEN = "8757441859:AAETtcmUuAXBmZorJA5wJytzqvrz0YWMCCk";
-const TG_CHAT_ID = "8242549328";
+const API_URL = "https://script.google.com/macros/s/AKfycbxJ5uqtJk1iGrA57m0ap4hyJgJ5aAN67OV0_xFXAKmdc4aY-PS7Wm5g8z_QDsRMHYFjDA/exec";
+const TG_TOKEN = "YOUR_TELEGRAM_TOKEN"; 
+const TG_CHAT_ID = "YOUR_CHAT_ID";      
 
 let students = [];
-let currentFilter = "전체";
-let isTeacherVerified = false;
-let currentTeacher = "";
+let busList = []; 
+let currentMainCat = "등원";
+let currentSubFilter = "전체";
+let teacherName = "";
 let longPressTimer;
+
+window.onload = loadData;
 
 async function loadData() {
   try {
     const res = await fetch(`${API_URL}?t=${Date.now()}`);
-    students = await res.json();
-    if(isTeacherVerified) renderAll();
-  } catch (e) { console.error("로드 실패"); }
+    const data = await res.json();
+    students = data.students || [];
+    busList = data.busStatus || []; 
+
+    renderBusSelect();
+    if(teacherName) renderAll();
+  } catch (e) {
+    document.getElementById("routeSelect").innerHTML = "<option>연결 오류 (시트 확인)</option>";
+  }
+}
+
+function renderBusSelect() {
+  const select = document.getElementById("routeSelect");
+  const prevValue = select.value;
+  select.innerHTML = "";
+
+  const sortedBuses = [...busList].sort((a, b) => {
+    const numA = parseInt(a.name.replace(/[^0-9]/g, "")) || 0;
+    const numB = parseInt(b.name.replace(/[^0-9]/g, "")) || 0;
+    return numA - numB;
+  });
+
+  if (sortedBuses.length === 0) {
+    select.innerHTML = "<option value=''>시트에 등록된 호차 없음</option>";
+    return;
+  }
+
+  sortedBuses.forEach(b => {
+    const opt = document.createElement("option");
+    opt.value = b.name;
+    const count = (currentMainCat === '등원') ? b.pCount : b.dCount;
+    opt.innerText = `${b.name} (현재 ${count}명)`;
+    if (b.name === prevValue) opt.selected = true;
+    select.appendChild(opt);
+  });
 }
 
 function activateList() {
-  currentTeacher = document.getElementById("teacherName").value.trim();
-  if(!currentTeacher) return alert("성함을 입력해주세요.");
-  isTeacherVerified = true;
-  document.getElementById("teacherSection").style.display = "none";
-  document.getElementById("filterContainer").style.display = "flex";
-  document.getElementById("list").style.display = "grid";
-  document.getElementById("finishBtn").style.display = "block";
-  loadData();
+    teacherName = document.getElementById("teacherName").value.trim();
+    if(!teacherName) return alert("선생님 성함을 입력해주세요.");
+    document.getElementById("teacherSection").style.display = "none";
+    document.getElementById("mainUI").style.display = "block";
+    document.getElementById("finishBtn").style.display = "block";
+    renderAll();
 }
 
-// 필터 버튼과 명단을 함께 그리는 함수
+function setMainCat(cat) {
+    currentMainCat = cat;
+    currentSubFilter = "전체";
+    document.getElementById('btnIn').classList.toggle('active', cat === '등원');
+    document.getElementById('btnOut').classList.toggle('active', cat === '하원');
+    renderBusSelect();
+    renderAll();
+}
+
 function renderAll() {
-  const container = document.getElementById("filterContainer");
-  const selectedBus = document.getElementById("routeSelect").value;
-  
-  const busShort = selectedBus.replace("호차", "");
-  const busFiltered = students.filter(s => String(s.bus).includes(busShort));
-
-  // 필터 버튼 생성 로직 복구
-  const cats = ["전체", ...new Set(busFiltered.map(s => s.category).filter(c => c))];
-  container.innerHTML = "";
-  cats.forEach(cat => {
-    const btn = document.createElement("button");
-    btn.className = `filter-btn ${currentFilter === cat ? 'active' : ''}`;
-    btn.innerText = cat;
-    btn.onclick = () => { currentFilter = cat; renderAll(); };
-    container.appendChild(btn);
-  });
-
-  renderList(busFiltered);
-}
-
-function renderList(busFiltered) {
-  const listDiv = document.getElementById("list");
-  listDiv.innerHTML = "";
-  
-  let filtered = busFiltered;
-  if (currentFilter !== "전체") filtered = filtered.filter(s => s.category === currentFilter);
-
-  filtered.forEach(s => {
-    const div = document.createElement("div");
-    const st = s.status || 'waiting';
-    const isBoarded = (st === 'boarded' || st === '탑승');
-    const isSpecial = ['개별등원', '개별하원', '결석'].includes(st);
-
-    div.className = `student ${isBoarded ? 'boarded' : (isSpecial ? 'special' : 'waiting')}`;
+    const busName = document.getElementById("routeSelect").value;
+    if (!busName) return;
+    const busNum = busName.replace(/[^0-9]/g, "");
     
-    // 롱프레스 & 클릭 분리 로직
-    div.onmousedown = div.ontouchstart = (e) => {
-      longPressTimer = setTimeout(() => {
-        sendTelegramAlert(s.name);
-        longPressTimer = null;
-      }, 1000); 
-    };
+    const busFiltered = students.filter(s => {
+        const targetBus = (currentMainCat === "등원") ? s.pBus : s.bus;
+        return String(targetBus).includes(busNum);
+    });
 
-    div.onmouseup = div.ontouchend = () => {
-      if (longPressTimer) {
-        clearTimeout(longPressTimer);
-        toggleStatus(s.name);
-      }
-    };
+    const cats = ["전체", ...new Set(busFiltered.map(s => s.category).filter(c => c))];
+    const fCont = document.getElementById("filterContainer");
+    fCont.innerHTML = cats.map(c => `
+        <button class="filter-btn ${currentSubFilter === c ? 'active' : ''}" 
+                onclick="currentSubFilter='${c}'; renderAll();">${c}</button>
+    `).join('');
 
-    div.innerHTML = `
-      <div class="info" style="font-size:0.7rem; color:#999; margin-bottom:5px;">${s.category || ''}</div>
-      <div class="name">${s.name}</div>
-      <div class="status-text">${isBoarded ? '● 탑승' : (isSpecial ? '⚠️ ' + st : '○ 미탑승')}</div>
-    `;
-    listDiv.appendChild(div);
-  });
+    const listDiv = document.getElementById("list");
+    const final = (currentSubFilter === "전체") ? busFiltered : busFiltered.filter(s => s.category === currentSubFilter);
+    
+    listDiv.innerHTML = final.map(s => {
+        const st = (currentMainCat === "등원") ? (s.inStatus || '미탑승') : (s.outStatus || '미탑승');
+        const isBoarded = (st === '탑승');
+        const isSpecial = ['개별등원', '개별하원', '결석'].includes(st);
+        const cardClass = isBoarded ? 'boarded' : (isSpecial ? 'special' : 'waiting');
+
+        return `
+            <div class="student ${cardClass}" 
+                 onmousedown="startPress('${s.name}')" ontouchstart="startPress('${s.name}')"
+                 onmouseup="endPress('${s.name}', ${isBoarded})" ontouchend="endPress('${s.name}', ${isBoarded})">
+                <div style="font-size:0.65rem; color:#999; margin-bottom:3px;">${s.category || ''}</div>
+                <div class="name">${s.name}</div>
+                <div class="status-text">${isBoarded ? '● 탑승' : (isSpecial ? '⚠️ ' + st : '○ 미탑승')}</div>
+            </div>
+        `;
+    }).join('');
 }
 
-async function toggleStatus(name) {
-  const idx = students.findIndex(s => s.name === name);
-  const next = (students[idx].status === 'boarded' || students[idx].status === '탑승') ? 'waiting' : 'boarded';
-  students[idx].status = next;
-  renderAll(); // 상태 변경 후 필터 유지하며 갱신
-  fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "updateStatus", name: name, status: next }) });
+function startPress(name) {
+    longPressTimer = setTimeout(() => { sendTelegramAlert(name); longPressTimer = null; }, 1000);
+}
+function endPress(name, isBoarded) {
+    if (longPressTimer) {
+        clearTimeout(longPressTimer);
+        toggleStatus(name, isBoarded);
+    }
+}
+
+async function toggleStatus(name, isBoarded) {
+    const next = isBoarded ? '미탑승' : '탑승'; 
+    const idx = students.findIndex(s => s.name === name);
+    if(idx === -1) return;
+    
+    if(currentMainCat === "등원") students[idx].inStatus = next;
+    else students[idx].outStatus = next;
+    
+    renderAll();
+    
+    fetch(API_URL, { 
+        method: 'POST', 
+        mode: 'no-cors', 
+        body: JSON.stringify({ 
+            action: "updateStatus", 
+            name: name, 
+            status: next,
+            type: currentMainCat 
+        }) 
+    });
 }
 
 function sendTelegramAlert(name) {
-  if (confirm(`[${name}] 학생의 미탑승 알림을 전송하시겠습니까?`)) {
-    const text = `📢 미탑승 알림\n${name} 안녕하세요 학생이 약속된 승차장소에 나오지 않아 연락 드렸습니다. 다른 학생들의 운행일정이 정해져 있어 출발해야 하는 점 양해 부탁드리겠습니다.`;
-    const url = `https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent(text)}`;
-    fetch(url).then(() => alert("미탑승 안내문자 발송완료")).catch(() => alert("전송 실패"));
-  }
+    if (confirm(`[${name}] 학생의 미탑승 알림을 전송하시겠습니까?`)) {
+        const text = `📢 미탑승 알림\n${name} 안녕하세요 학생이 약속된 승차장소에 나오지 않아 연락 드렸습니다. 다른 학생들의 운행일정이 정해져 있어 출발해야 하는 점 양해 부탁드리겠습니다.`;
+        const url = `https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent(text)}`;
+        fetch(url).then(() => alert("발송완료")).catch(() => alert("전송 실패"));
+    }
 }
 
 async function finishTrip() {
-  if(!confirm("운행을 종료하고 데이터를 전송하시겠습니까?")) return;
-  const btn = document.getElementById("finishBtn");
-  btn.innerText = "⏳ 마감 및 초기화 중...";
-  btn.disabled = true;
+    const busName = document.getElementById("routeSelect").value;
+    if(!confirm(`${busName} (${currentMainCat}) 운행을 종료하고 데이터를 전송하시겠습니까?`)) return;
+    
+    const btn = document.getElementById("finishBtn");
+    btn.innerText = "⏳ 마감 및 초기화 중...";
+    btn.disabled = true;
 
-  try {
-    await fetch(API_URL, {
-      method: 'POST',
-      body: JSON.stringify({ action: "finishTrip", teacher: currentTeacher, logs: students.filter(s => String(s.bus).includes(document.getElementById("routeSelect").value.replace("호차",""))) })
-    });
-    alert("마감자료가 성공적으로 전송되었습니다! 오늘도 고생많으셨습니다^^!");
-    location.reload();
-  } catch (e) {
-    alert("마감 중 오류 발생");
-    btn.innerText = "✅ 운행 종료 및 데이터 전송";
-    btn.disabled = false;
-  }
+    const busNum = busName.replace("호차", "");
+    const currentLogs = students.filter(s => String(currentMainCat === '등원' ? s.pBus : s.bus).includes(busNum));
+
+    try {
+        await fetch(API_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: JSON.stringify({ 
+                action: "finishTrip", 
+                teacher: teacherName, 
+                busName: `${busName}(${currentMainCat})`, 
+                logs: currentLogs,
+                type: currentMainCat
+            })
+        });
+        alert("마감자료가 성공적으로 전송되었습니다! 오늘도 고생많으셨습니다^^!");
+        location.reload();
+    } catch (e) {
+        alert("오류 발생");
+        btn.disabled = false;
+        btn.innerText = "✅ 운행 종료 및 데이터 전송";
+    }
 }
 
-function onBusChange() { currentFilter = "전체"; if(isTeacherVerified) loadData(); }
-setInterval(loadData, 20000);
+setInterval(() => { 
+    if(teacherName && document.getElementById("mainUI").style.display === "block") {
+        loadData(); 
+    }
+}, 10000);
 </script>
 </body>
 </html>

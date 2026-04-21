@@ -9,36 +9,28 @@
     body { background-color: #f8f9fa; padding: 15px; font-family: 'Malgun Gothic', sans-serif; }
     .card { border-radius: 12px; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; padding: 20px; background: white; }
     .section-title { font-weight: bold; color: #333; border-left: 5px solid #0d6efd; padding-left: 12px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
-    
-    /* 호차 카드: 등원/하원 정원 표시 (이미지 38ae25 준수) */
     .bus-card { cursor: pointer; background: #fff; border: 1px solid #dee2e6; border-radius: 10px; padding: 12px; margin: 5px; flex: 1 1 140px; text-align: center; transition: 0.2s; }
     .bus-card.active { border-color: #0d6efd; background-color: #e7f1ff; box-shadow: inset 0 0 0 1px #0d6efd; }
     .bus-name { font-weight: bold; font-size: 1.1rem; display: block; margin-bottom: 5px; }
     .status-text { font-size: 0.85rem; color: #666; line-height: 1.5; }
-    
-    /* 배지 스타일 */
     .badge-note { background-color: #5bc0de; color: white; font-size: 0.75rem; padding: 3px 6px; border-radius: 4px; font-weight: bold; margin-bottom: 5px; display: inline-block; }
     .badge-diff { background-color: #d9534f; color: white; font-size: 0.75rem; padding: 3px 6px; border-radius: 4px; font-weight: bold; margin-left: 5px; }
-    
     .p-bus-text { color: #0d6efd; font-weight: bold; }
     .d-bus-text { color: #d32f2f; font-weight: bold; }
     .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); display: none; justify-content: center; align-items: center; z-index: 9999; }
     .table-info-custom { background-color: #f0faff !important; }
+    .top-nav { margin-bottom: 15px; }
   </style>
 </head>
 <body>
 
-
-<div class="top-nav">
-  <button class="btn btn-primary fw-bold" onclick="window.open('https://docs.google.com/spreadsheets/d/1y5I-WpIPXNQVHnai6TLiih5V7lqDU71ACii2tgf4dls/edit?gid=0#gid=0')">📊 데이터 관리 센터 이동</button>
-</div>
-
-
-
-
 <div id="loading" class="loading-overlay"><div class="spinner-border text-primary"></div></div>
 
 <div class="container-fluid">
+  <div class="top-nav">
+    <button class="btn btn-primary fw-bold" onclick="window.open('https://docs.google.com/spreadsheets/d/1Y276IF0wsiA06CXy8WVOW8UpCjaRJenSdg7BYe3wDy0/edit?gid=2000086756#gid=2000086756')">📊 데이터 관리 센터 이동</button>
+  </div>
+
   <div class="card">
     <div class="section-title"><span>🚌 실시간 호차 현황</span> <button class="btn btn-sm btn-dark" onclick="showBusMgr()">⚙️ 호차 설정</button></div>
     <div id="busStatusArea" class="d-flex flex-wrap"></div>
@@ -50,7 +42,6 @@
         <div class="section-title small text-primary">학생정보 등록/수정 <button class="btn btn-sm btn-outline-secondary" onclick="downloadTemplate()">양식 다운로드</button></div>
         <div class="input-group input-group-sm mb-3">
           <input type="file" id="csvInput" accept=".csv" class="form-control" onchange="uploadCsv(this)">
-          <button class="btn btn-success">일괄 등록</button>
         </div>
         <form id="regForm" class="row g-2">
           <input type="hidden" id="rowNum">
@@ -94,48 +85,124 @@
   </div>
 </div>
 
-<div class="modal fade" id="busMgrModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
-  <div class="modal-header"><h5>호차 및 정원 설정</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-  <div class="modal-body">
-    <div class="input-group mb-3">
-      <input type="text" id="newBusName" class="form-control" placeholder="호차명">
-      <input type="number" id="newBusCap" class="form-control" placeholder="정원">
-      <button class="btn btn-primary" onclick="manageBus('add')">추가</button>
+<div class="modal fade" id="busMgrModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header"><h5>호차 및 정원 설정</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="input-group mb-3">
+          <input type="text" id="newBusName" class="form-control" placeholder="호차명">
+          <input type="number" id="newBusCap" class="form-control" placeholder="정원">
+          <button class="btn btn-primary" onclick="manageBus('add')">추가</button>
+        </div>
+        <ul id="busList" class="list-group"></ul>
+      </div>
     </div>
-    <ul id="busList" class="list-group"></ul>
   </div>
-</div></div></div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw3nKTg022OpA_ZfY7i60pgdE7jVaoZ1d7v4UAcZP2OOb1P245KhAuaPK5aahjcRJuv/exec";
+  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxJ5uqtJk1iGrA57m0ap4hyJgJ5aAN67OV0_xFXAKmdc4aY-PS7Wm5g8z_QDsRMHYFjDA/exec";
   let allStudents = [], allBuses = [], selectedBus = "";
 
   window.onload = loadData;
 
   function loadData() {
     toggleLoading(true);
-    fetch(WEB_APP_URL).then(res => res.json()).then(data => {
-      allStudents = data.students; allBuses = data.busStatus;
-      renderBusStatus(); setupFilters(); filterData();
+    fetch(`${WEB_APP_URL}?t=${Date.now()}`)
+      .then(res => res.json())
+      .then(data => {
+        allStudents = data.students || [];
+        allBuses = data.busStatus || [];
+        renderBusStatus();
+        setupFilters();
+        filterData();
+        toggleLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        toggleLoading(false);
+      });
+  }
+
+  function postToGas(payload) {
+    toggleLoading(true);
+    return fetch(WEB_APP_URL, {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    })
+    .then(res => res.text())
+    .then(text => {
+      loadData();
+      return text;
+    })
+    .catch(err => {
+      console.error(err);
+      alert("오류가 발생했습니다.");
       toggleLoading(false);
     });
   }
 
-  // 실시간 현황 렌더링 (등원 인원/정원, 하원 인원/정원 표시 - 이미지 38ae25)
+  function saveData() {
+    const rNum = document.getElementById('rowNum').value;
+    const payload = {
+      action: rNum ? "update" : "insert",
+      rowNum: rNum,
+      type: document.getElementById('inType').value,
+      name: document.getElementById('inName').value,
+      day: document.getElementById('inDay').value,
+      pLoc: document.getElementById('pLoc').value,
+      pBus: document.getElementById('pBus').value,
+      dLoc: document.getElementById('dLoc').value,
+      dBus: document.getElementById('dBus').value,
+      note: document.getElementById('inNote').value
+    };
+    if(!payload.name) return alert("학생명을 입력해주세요.");
+    postToGas(payload).then(() => {
+      resetForm();
+      alert("저장되었습니다.");
+    });
+  }
+
+  function manageBus(action, rowNum) {
+    const name = document.getElementById('newBusName').value;
+    const capacity = document.getElementById('newBusCap').value;
+    if (action === 'add' && (!name || !capacity)) return alert("호차명과 정원을 입력해주세요.");
+
+    postToGas({ target: "bus", action: action, rowNum: rowNum, name: name, capacity: capacity })
+    .then(() => {
+      document.getElementById('newBusName').value = "";
+      document.getElementById('newBusCap').value = "";
+      const modalEl = document.getElementById('busMgrModal');
+      const modalInstance = bootstrap.Modal.getInstance(modalEl);
+      if(modalInstance) modalInstance.hide();
+    });
+  }
+
+  function showBusMgr() {
+    const list = document.getElementById('busList');
+    allBuses.sort((a, b) => (parseInt(a.name.replace(/[^0-9]/g, "")) || 0) - (parseInt(b.name.replace(/[^0-9]/g, "")) || 0));
+    list.innerHTML = allBuses.map(b => `
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <span><strong>${b.name}</strong> (정원:${b.capacity}명)</span>
+        <button class="btn btn-sm btn-danger" onclick="manageBus('delete', ${b.rowNum})">삭제</button>
+      </li>`).join('');
+    new bootstrap.Modal(document.getElementById('busMgrModal')).show();
+  }
+
   function renderBusStatus() {
     const area = document.getElementById('busStatusArea'), pb = document.getElementById('pBus'), db = document.getElementById('dBus');
     area.innerHTML = `<div class="bus-card ${selectedBus===''?'active':''}" onclick="selectedBus='';renderBusStatus();filterData();"><strong>전체</strong><br><span class="status-text">총 명단 확인</span></div>`;
-    pb.innerHTML = ''; db.innerHTML = '';
+    pb.innerHTML = '<option value="">등원차 선택</option>';
+    db.innerHTML = '<option value="">하원차 선택</option>';
     
+    allBuses.sort((a, b) => (parseInt(a.name.replace(/[^0-9]/g, "")) || 0) - (parseInt(b.name.replace(/[^0-9]/g, "")) || 0));
     allBuses.forEach(b => {
       area.innerHTML += `
         <div class="bus-card ${selectedBus===b.name?'active':''}" onclick="selectedBus='${b.name}';renderBusStatus();filterData();">
           <span class="bus-name">${b.name}</span>
-          <div class="status-text">
-            등원: ${b.pCount}/${b.capacity}<br>
-            하원: ${b.dCount}/${b.capacity}
-          </div>
+          <div class="status-text">등원: ${b.pCount}/${b.capacity}<br>하원: ${b.dCount}/${b.capacity}</div>
         </div>`;
       pb.innerHTML += `<option value="${b.name}">${b.name}</option>`;
       db.innerHTML += `<option value="${b.name}">${b.name}</option>`;
@@ -152,25 +219,15 @@
     allStudents.forEach(s => {
       const bM = !selectedBus || s.pBus === selectedBus || s.dBus === selectedBus;
       const nM = s.name.toLowerCase().includes(nameS);
-      const fM = (!tF || s.type === tF) && (!dF || s.dayInfo === dF) && (!pBF || s.pBus === pBF) && (!dBF || s.dBus === dBF);
-      
+      const fM = (!tF || s.category === tF) && (!dF || s.dayInfo === dF) && (!pBF || s.pBus === pBF) && (!dBF || s.dBus === dBF);
       if (bM && nM && fM) {
         tbody.innerHTML += `
           <tr class="${s.hasNote ? 'table-info-custom' : ''}">
-            <td>
-              ${s.hasNote ? '<span class="badge-note">💡 비고확인</span><br>' : ''}
-              <strong>${s.name}</strong>${s.isDifferent ? '<span class="badge-diff">[등하원 상이]</span>' : ''}<br>
-              <small class="text-muted">${s.type}</small>
-            </td>
+            <td>${s.hasNote ? '<span class="badge-note">💡 비고확인</span><br>' : ''}<strong>${s.name}</strong>${s.isDifferent ? '<span class="badge-diff">[등하원 상이]</span>' : ''}<br><small class="text-muted">${s.category}</small></td>
             <td>${s.dayInfo}</td>
             <td>${s.pLoc}<br><span class="p-bus-text">${s.pBus}</span></td>
             <td>${s.dLoc}<br><span class="d-bus-text">${s.dBus}</span></td>
-            <td>
-              <div class="btn-group">
-                <button class="btn btn-sm btn-outline-primary" onclick="editMode(${s.rowNum})">수정</button>
-                <button class="btn btn-sm btn-outline-danger" onclick="deleteStudent(${s.rowNum},'${s.name}')">삭제</button>
-              </div>
-            </td>
+            <td><div class="btn-group"><button class="btn btn-sm btn-outline-primary" onclick="editMode(${s.rowNum})">수정</button><button class="btn btn-sm btn-outline-danger" onclick="deleteStudent(${s.rowNum},'${s.name}')">삭제</button></div></td>
           </tr>`;
       }
     });
@@ -178,37 +235,51 @@
 
   function setupFilters() {
     const tS = new Set(), dyS = new Set(), bS = new Set();
-    allStudents.forEach(s => { tS.add(s.type); dyS.add(s.dayInfo); bS.add(s.pBus); bS.add(s.dBus); });
-    
+    allStudents.forEach(s => { if(s.category) tS.add(s.category); if(s.dayInfo) dyS.add(s.dayInfo); if(s.pBus) bS.add(s.pBus); if(s.dBus) bS.add(s.dBus); });
     const fill = (id, set, label) => {
       const el = document.getElementById(id), cur = el.value;
       el.innerHTML = `<option value="">전체 ${label}</option>`;
       set.forEach(v => { if(v) el.innerHTML += `<option value="${v}">${v}</option>`; });
       el.value = cur;
     };
-    fill('fType', tS, '구분'); fill('fDay', dyS, '요일');
-    fill('fPBus', bS, '등원차'); fill('fDBus', bS, '하원차');
-
-    // 등록 폼 드롭다운 (이미지 38bd87 스타일)
+    fill('fType', tS, '구분'); fill('fDay', dyS, '요일'); fill('fPBus', bS, '등원차'); fill('fDBus', bS, '하원차');
     const inT = document.getElementById('inType'); inT.innerHTML = '<option value="">구분 선택</option>';
     tS.forEach(v => inT.innerHTML += `<option value="${v}">${v}</option>`);
     const inD = document.getElementById('inDay'); inD.innerHTML = '<option value="">요일 선택</option>';
     dyS.forEach(v => inD.innerHTML += `<option value="${v}">${v}</option>`);
   }
 
-  // 나머지 함수들은 이전과 동일 (saveData, deleteStudent, editMode, uploadCsv 등)
-  function saveData() {
-    const payload = {
-      action: document.getElementById('rowNum').value ? "update" : "insert", 
-      rowNum: document.getElementById('rowNum').value,
-      type: document.getElementById('inType').value, name: document.getElementById('inName').value,
-      day: document.getElementById('inDay').value, pLoc: document.getElementById('pLoc').value,
-      pBus: document.getElementById('pBus').value, dLoc: document.getElementById('dLoc').value,
-      dBus: document.getElementById('dBus').value, note: document.getElementById('inNote').value,
-      pTime: "", dTime: ""
+  function deleteStudent(rowNum, name) {
+    if(!confirm(name + " 학생을 삭제하시겠습니까?")) return;
+    postToGas({ action: "deleteStudent", rowNum });
+  }
+
+  function editMode(rowNum) {
+    const s = allStudents.find(i => i.rowNum == rowNum);
+    if(!s) return;
+    document.getElementById('rowNum').value = rowNum;
+    document.getElementById('inType').value = s.category;
+    document.getElementById('inName').value = s.name;
+    document.getElementById('inDay').value = s.dayInfo; 
+    document.getElementById('pLoc').value = s.pLoc;
+    document.getElementById('pBus').value = s.pBus; 
+    document.getElementById('dLoc').value = s.dLoc;
+    document.getElementById('dBus').value = s.dBus; 
+    document.getElementById('inNote').value = s.note;
+    document.getElementById('btnCancel').classList.remove('d-none'); 
+    window.scrollTo(0,0);
+  }
+
+  function uploadCsv(input) {
+    const file = input.files[0]; if(!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const rows = e.target.result.split("\n").slice(1).map(r => r.split(",").map(c => c.trim())).filter(r => r[1]);
+      if(confirm(rows.length + "명을 등록하시겠습니까?")) {
+        postToGas({ action: "bulkUpload", rows });
+      }
     };
-    if(!payload.name) return alert("학생명을 입력해주세요.");
-    toggleLoading(true); fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify(payload) }).then(() => { resetForm(); loadData(); });
+    reader.readAsText(file, "EUC-KR");
   }
 
   function downloadTemplate() {
@@ -218,46 +289,8 @@
     link.setAttribute("download", "셔틀양식.csv"); link.click();
   }
 
-  function uploadCsv(input) {
-    const file = input.files[0]; if(!file) return;
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      const rows = e.target.result.split("\n").slice(1).map(r => r.split(",").map(c => c.trim())).filter(r => r[1]);
-      if(confirm(rows.length + "명을 등록하시겠습니까?")) {
-        toggleLoading(true); fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: "bulkUpload", rows }) }).then(() => loadData());
-      }
-    };
-    reader.readAsText(file, "EUC-KR");
-  }
-
-  function editMode(rowNum) {
-    const s = allStudents.find(i => i.rowNum == rowNum);
-    document.getElementById('rowNum').value = rowNum;
-    document.getElementById('inType').value = s.type; document.getElementById('inName').value = s.name;
-    document.getElementById('inDay').value = s.dayInfo; document.getElementById('pLoc').value = s.pLoc;
-    document.getElementById('pBus').value = s.pBus; document.getElementById('dLoc').value = s.dLoc;
-    document.getElementById('dBus').value = s.dBus; document.getElementById('inNote').value = s.note;
-    document.getElementById('btnCancel').classList.remove('d-none'); window.scrollTo(0,0);
-  }
-
-  function deleteStudent(rowNum, name) {
-    if(!confirm(name + " 학생을 삭제하시겠습니까?")) return;
-    toggleLoading(true); fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({action:"deleteStudent", rowNum}) }).then(() => loadData());
-  }
-
   function resetForm() { document.getElementById('regForm').reset(); document.getElementById('rowNum').value = ""; document.getElementById('btnCancel').classList.add('d-none'); }
   function toggleLoading(v) { document.getElementById('loading').style.display = v ? 'flex' : 'none'; }
-  function showBusMgr() {
-    const list = document.getElementById('busList');
-    list.innerHTML = allBuses.map(b => `<li class="list-group-item d-flex justify-content-between"><span>${b.name} (정원:${b.capacity})</span> <button class="btn btn-sm btn-danger" onclick="manageBus('delete', ${b.rowNum})">삭제</button></li>`).join('');
-    new bootstrap.Modal(document.getElementById('busMgrModal')).show();
-  }
-  function manageBus(action, rowNum) {
-    const payload = { target: "bus", action, rowNum, name: document.getElementById('newBusName').value, capacity: document.getElementById('newBusCap').value };
-    toggleLoading(true); fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify(payload) }).then(() => {
-      bootstrap.Modal.getInstance(document.getElementById('busMgrModal')).hide(); loadData();
-    });
-  }
 </script>
 </body>
 </html>
